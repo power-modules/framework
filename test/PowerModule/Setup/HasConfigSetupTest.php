@@ -20,51 +20,26 @@ class HasConfigSetupTest extends TestCase
 {
     public function testSetupSetsConfigAndAppRoot(): void
     {
-        $mockConfig = $this->createMock(PowerModuleConfig::class);
-        $mockConfig->expects($this->once())
-            ->method('set')
-            ->with(Setting::AppRoot, 'root-dir');
-
-        $mockLoader = $this->createMock(Loader::class);
-        $mockAppConfig = $this->createMock(Config::class);
-        $mockAppConfig->expects($this->once())
-            ->method('get')
-            ->with(Setting::AppRoot)
-            ->willReturn('root-dir');
-
-        $mockHasConfigPowerModule = new class ($mockConfig) implements HasConfig, PowerModule {
-            private PowerModuleConfig $config;
-            public function __construct(PowerModuleConfig $config)
-            {
-                $this->config = $config;
-            }
-            public function getConfig(): PowerModuleConfig
-            {
-                return $this->config;
-            }
-            public function setConfig(PowerModuleConfig $powerModuleConfig): void
-            {
-                $this->config = $powerModuleConfig;
-            }
-            public function register(ConfigurableContainerInterface $container): void
-            {
-            }
-        };
-
-        $mockLoader->expects($this->once())
-            ->method('getConfig')
-            ->with($mockHasConfigPowerModule)
-            ->willReturn($mockConfig);
-
+        $powerModule = new \Modular\Framework\Test\PowerModule\Sample\LibraryA\ConfigurableLibraryAModule();
         $dto = new PowerModuleSetupDto(
             SetupPhase::Pre,
-            $mockHasConfigPowerModule,
+            $powerModule,
             $this->createMock(ConfigurableContainerInterface::class),
             $this->createMock(ConfigurableContainerInterface::class),
-            $mockAppConfig,
+            Config::create()->set(Setting::AppRoot, 'root-dir')->set(Setting::CachePath, 'root-dir/cache'),
         );
-
-        (new HasConfigSetup($mockLoader))->setup($dto);
+        $hasConfigSetup = new HasConfigSetup(
+            new Loader(__DIR__ . '/../../Test/PowerModule/Sample'),
+        );
+        $hasConfigSetup->setup($dto);
+        self::assertSame(
+            'root-dir',
+            $powerModule->getConfig()->get(Setting::AppRoot),
+        );
+        self::assertSame(
+            'root-dir/cache',
+            $powerModule->getConfig()->get(Setting::CachePath),
+        );
     }
 
     public function testSetupDoesNothingIfNotPrePhase(): void

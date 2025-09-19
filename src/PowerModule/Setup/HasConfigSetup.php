@@ -38,6 +38,10 @@ class HasConfigSetup implements CanSetupPowerModule
                 Setting::AppRoot,
                 $powerModuleSetupDto->modularAppConfig->get(Setting::AppRoot),
             )
+            ->set(
+                Setting::CachePath,
+                $powerModuleSetupDto->modularAppConfig->get(Setting::CachePath),
+            )
         ;
     }
 }

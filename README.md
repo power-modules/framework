@@ -25,7 +25,7 @@ This approach enforces clear boundaries between modules, making the framework id
 Install via Composer:
 
 ```sh
-composer require modular/framework
+composer require power-modules/framework
 ```
 
 ## Application Architecture Overview
