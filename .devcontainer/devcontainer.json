@@ -1,0 +1,31 @@
+{
+    "name": "Power Modules, Devcontainer",
+    "image": "power-modules-devcontainer",
+    "mounts": [
+        "type=bind,source=${localEnv:HOME}/.ssh,target=/root/.ssh,readonly",
+        "type=bind,source=${localEnv:HOME}/.ssh,target=${localEnv:HOME}/.ssh,readonly"
+    ],
+    "containerEnv": {
+        "XDEBUG_MODE": "debug",
+        "XDEBUG_SESSION": "1",
+        "XDEBUG_CONFIG": "start_with_request=yes log_level=0"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "jaguadoromero.vscode-php-create-class",
+                "junstyle.php-cs-fixer",
+                "xdebug.php-debug",
+                "bmewburn.vscode-intelephense-client",
+                "MehediDracula.php-namespace-resolver",
+                "valeryanm.vscode-phpsab",
+                "SanderRonde.phpstan-vscode",
+                "emallin.phpunit",
+                "marclipovsky.string-manipulation",
+                "formulahendry.code-runner",
+                "eamodio.gitlens",
+                "usernamehw.errorlens"
+            ]
+        }
+    }
+}

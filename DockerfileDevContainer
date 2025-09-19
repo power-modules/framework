@@ -1,0 +1,52 @@
+FROM registry.fedoraproject.org/fedora-minimal:42
+
+# Base
+RUN dnf install -y \
+    awk \
+    tar \
+    zip \
+    git \
+    make \
+    openssl \
+    composer \
+    iputils \
+    --nodocs \
+    --setopt install_weak_deps=0
+
+# PHP
+RUN dnf install -y \
+    php \
+    php-devel \
+    php-cli \
+    php-common \
+    php-intl \
+    php-mbstring \
+    php-opcache \
+    php-pdo \
+    php-mysqlnd \
+    php-process \
+    php-sodium \
+    php-xml \
+    php-xdebug \
+    php-gmp \
+    --nodocs \
+    --setopt install_weak_deps=0
+
+# PHP EXT / SETUP
+RUN dnf install -y \
+    pecl \
+    php-pecl-zip \
+    php-pecl-apcu \
+    php-pecl-redis5 \
+    --nodocs \
+    --setopt install_weak_deps=0
+RUN pecl channel-update pecl.php.net
+
+# ZSH
+RUN dnf install -y zsh \
+    --nodocs \
+    --setopt install_weak_deps=0
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Cleanup space
+RUN dnf clean all -y
