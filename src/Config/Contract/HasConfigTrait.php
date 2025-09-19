@@ -2,8 +2,6 @@
 
 namespace Modular\Framework\Config\Contract;
 
-use Modular\Framework\App\Config\Setting;
-
 // @phpstan-ignore-next-line
 trait HasConfigTrait
 {
