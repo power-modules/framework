@@ -1,0 +1,8 @@
+/vendor
+
+/tmp/*
+
+/.phpunit.cache
+/.php-cs-fixer.cache
+
+/.vscode
