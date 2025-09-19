@@ -1,0 +1,36 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "power-modules/framework",
+    "description": "A powerful modular PHP framework with encapsulated modules, each having its own DI container and explicit import/export mechanisms",
+    "type": "library",
+    "keywords": [
+        "modular",
+        "framework",
+        "power-modules",
+        "dependency-injection",
+        "encapsulation",
+        "microservices",
+        "modular-architecture",
+        "di-container",
+        "component-based"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evgenii T",
+            "email": "roundcubez@gmail.com",
+            "role": "Owner"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modular\\Framework\\": "src/",
+            "Modular\\Framework\\Test\\": "test/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.2",
+        "friendsofphp/php-cs-fixer": "^3.86",
+        "phpstan/phpstan": "^2.1"
+    }
+}
