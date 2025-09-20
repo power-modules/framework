@@ -64,7 +64,7 @@ class App implements ContainerInterface
             $modulesToRegister,
         );
 
-        // First pass: register all modules. Setup phase: Pre
+        // First pass: register all modules and exported components in the root container. Setup phase: Pre
         foreach ($powerModules as $powerModule) {
             $this->registerModule($powerModule);
         }
