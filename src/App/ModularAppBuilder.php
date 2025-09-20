@@ -12,7 +12,9 @@ use Modular\Framework\Config\Loader;
 use Modular\Framework\Container\ConfigurableContainer;
 use Modular\Framework\Container\ConfigurableContainerInterface;
 use Modular\Framework\PowerModule\CachingModuleDependencySorter;
+use Modular\Framework\PowerModule\Contract\CanCreatePowerModuleInstance;
 use Modular\Framework\PowerModule\Contract\ModuleDependencySorter;
+use Modular\Framework\PowerModule\DefaultModuleResolver;
 use Modular\Framework\PowerModule\IterativeModuleDependencySorter;
 use Modular\Framework\PowerModule\Setup\ExportsComponentsSetup;
 use Modular\Framework\PowerModule\Setup\HasConfigSetup;
@@ -25,6 +27,8 @@ class ModularAppBuilder
     private ?Config $config = null;
     private ?ConfigurableContainerInterface $rootContainer = null;
     private ?ModuleDependencySorter $moduleDependencySorter = null;
+    private ?CanCreatePowerModuleInstance $canCreatePowerModuleInstance = null;
+    private ?CacheInterface $cache = null;
 
     public function __construct(
         private readonly string $appRoot,
@@ -54,10 +58,14 @@ class ModularAppBuilder
 
     public function withCache(CacheInterface $cache): self
     {
-        $this->moduleDependencySorter = new CachingModuleDependencySorter(
-            new IterativeModuleDependencySorter(),
-            $cache,
-        );
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+    public function withModuleResolver(CanCreatePowerModuleInstance $moduleResolver): self
+    {
+        $this->canCreatePowerModuleInstance = $moduleResolver;
 
         return $this;
     }
@@ -65,16 +73,19 @@ class ModularAppBuilder
     public function build(): App
     {
         $config = $this->config ?? Config::forAppRoot($this->appRoot);
+        $cache = $this->cache ?? new FilesystemCache($config->get(Setting::CachePath));
         $rootContainer = $this->rootContainer ?? new ConfigurableContainer();
         $dependencySorter = $this->moduleDependencySorter ?? new CachingModuleDependencySorter(
             new IterativeModuleDependencySorter(),
-            new FilesystemCache($config->get(Setting::CachePath)),
+            $cache,
         );
+        $moduleResolver = $this->canCreatePowerModuleInstance ?? new DefaultModuleResolver();
 
         $app = new App(
             config: $config,
             rootContainer: $rootContainer,
             moduleDependencySorter: $dependencySorter,
+            canCreatePowerModuleInstance: $moduleResolver,
         );
 
         $app->addPowerModuleSetup(new ModularAppConfigInjector())

@@ -5,12 +5,9 @@ namespace Modular\Framework\PowerModule\Setup;
 use Modular\Framework\Container\Exception\ContainerException;
 use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
 use Modular\Framework\PowerModule\Contract\ImportsComponents;
-use Modular\Framework\PowerModule\GetPowerModuleNameTrait;
 
 class ImportsComponentsSetup implements CanSetupPowerModule
 {
-    use GetPowerModuleNameTrait;
-
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
     {
         if ($powerModuleSetupDto->setupPhase !== SetupPhase::Post) {

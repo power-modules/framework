@@ -13,28 +13,24 @@ use Modular\Framework\PowerModule\Contract\CanCreatePowerModuleInstance;
 use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
 use Modular\Framework\PowerModule\Contract\ModuleDependencySorter;
 use Modular\Framework\PowerModule\Contract\PowerModule;
-use Modular\Framework\PowerModule\DefaultModuleResolver;
-use Modular\Framework\PowerModule\GetPowerModuleNameTrait;
+use Modular\Framework\PowerModule\PowerModuleHelper;
 use Modular\Framework\PowerModule\Setup\PowerModuleSetupDto;
 use Modular\Framework\PowerModule\Setup\SetupPhase;
 use Psr\Container\ContainerInterface;
 
 class App implements ContainerInterface
 {
-    use GetPowerModuleNameTrait;
-
     /**
      * @var array<CanSetupPowerModule>
      */
     private array $moduleSetups = [];
-    private CanCreatePowerModuleInstance $canCreatePowerModuleInstance;
 
     public function __construct(
-        private Config $config,
-        private ConfigurableContainerInterface $rootContainer,
-        private ModuleDependencySorter $moduleDependencySorter,
+        private readonly Config $config,
+        private readonly ConfigurableContainerInterface $rootContainer,
+        private readonly ModuleDependencySorter $moduleDependencySorter,
+        private readonly CanCreatePowerModuleInstance $canCreatePowerModuleInstance,
     ) {
-        $this->canCreatePowerModuleInstance = new DefaultModuleResolver();
     }
 
     /**
@@ -64,19 +60,22 @@ class App implements ContainerInterface
 
         /** @var array<PowerModule> $powerModules */
         $powerModules = array_map(
-            fn (string $powerModuleClassName): PowerModule => $this->canCreatePowerModuleInstance->create($powerModuleClassName),
+            $this->canCreatePowerModuleInstance->create(...),
             $modulesToRegister,
         );
 
+        // First pass: register all modules. Setup phase: Pre
         foreach ($powerModules as $powerModule) {
             $this->registerModule($powerModule);
         }
 
+        // Second pass: setup all modules. Setup phase: Post
         foreach ($powerModules as $powerModule) {
+            $powerModuleName =  PowerModuleHelper::getPowerModuleName($powerModule);
+            $setupDto = $this->getSetupDto($powerModule, SetupPhase::Post, $this->rootContainer->get($powerModuleName));
+
             foreach ($this->moduleSetups as $canSetupPowerModule) {
-                $canSetupPowerModule->setup(
-                    $this->getSetupDto($powerModule, SetupPhase::Post, $this->rootContainer->get($this->getPowerModuleName($powerModule))),
-                );
+                $canSetupPowerModule->setup($setupDto);
             }
         }
 
@@ -90,16 +89,9 @@ class App implements ContainerInterface
         return $this;
     }
 
-    public function setModuleResolver(CanCreatePowerModuleInstance $canCreatePowerModuleInstance): self
-    {
-        $this->canCreatePowerModuleInstance = $canCreatePowerModuleInstance;
-
-        return $this;
-    }
-
     private function registerModule(PowerModule $powerModule): self
     {
-        $powerModuleName = $this->getPowerModuleName($powerModule);
+        $powerModuleName =  PowerModuleHelper::getPowerModuleName($powerModule);
 
         if ($this->rootContainer->has($powerModuleName) === true) {
             throw new ContainerException(
@@ -108,11 +100,10 @@ class App implements ContainerInterface
         }
 
         $moduleContainer = new ConfigurableContainer();
+        $setupDto = $this->getSetupDto($powerModule, SetupPhase::Pre, $moduleContainer);
 
         foreach ($this->moduleSetups as $canSetupPowerModule) {
-            $canSetupPowerModule->setup(
-                $this->getSetupDto($powerModule, SetupPhase::Pre, $moduleContainer),
-            );
+            $canSetupPowerModule->setup($setupDto);
         }
 
         $powerModule->register($moduleContainer);

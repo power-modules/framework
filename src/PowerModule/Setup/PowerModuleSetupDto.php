@@ -6,14 +6,14 @@ use Modular\Framework\App\Config\Config;
 use Modular\Framework\Container\ConfigurableContainerInterface;
 use Modular\Framework\PowerModule\Contract\PowerModule;
 
-class PowerModuleSetupDto
+final readonly class PowerModuleSetupDto
 {
     public function __construct(
-        public readonly SetupPhase $setupPhase,
-        public readonly PowerModule $powerModule,
-        public readonly ConfigurableContainerInterface $rootContainer,
-        public readonly ConfigurableContainerInterface $moduleContainer,
-        public readonly Config $modularAppConfig,
+        public SetupPhase $setupPhase,
+        public PowerModule $powerModule,
+        public ConfigurableContainerInterface $rootContainer,
+        public ConfigurableContainerInterface $moduleContainer,
+        public Config $modularAppConfig,
     ) {
     }
 }

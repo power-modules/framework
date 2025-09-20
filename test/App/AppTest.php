@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Modular\Framework\Test\App;
 
 use Modular\Framework\App\App;
+use Modular\Framework\App\Config\Config;
+use Modular\Framework\App\Config\Setting;
 use Modular\Framework\App\ModularAppBuilder;
-use Modular\Framework\Cache\FilesystemCache;
 use Modular\Framework\Test\App\Sample\LibA\LibAExternalService;
 use Modular\Framework\Test\App\Sample\LibA\LibAInternalService;
 use Modular\Framework\Test\App\Sample\LibA\LibAModule;
@@ -24,7 +25,7 @@ class AppTest extends TestCase
     {
         parent::setUp();
         $this->app = new ModularAppBuilder(__DIR__)
-            ->withCache(new FilesystemCache(sys_get_temp_dir()))
+            ->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, sys_get_temp_dir()))
             ->build()
         ;
     }
