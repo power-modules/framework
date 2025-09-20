@@ -24,13 +24,17 @@
     ],
     "autoload": {
         "psr-4": {
-            "Modular\\Framework\\": "src/",
+            "Modular\\Framework\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Modular\\Framework\\Test\\": "test/"
         }
     },
     "require": {
+        "php": "^8.4",
         "psr/container": "^2.0",
-        "psr/http-server-handler": "^1.0",
         "psr/simple-cache": "^3.0"
     },
     "require-dev": {
