@@ -285,9 +285,11 @@ class MyModule implements PowerModule, ExportsComponents
     }
 }
 
-// Importing components
+// The following example demonstrates integration with the [power-modules/router](https://github.com/power-modules/router) package, which is an optional extension for HTTP routing. If you haven't installed it yet, add it via Composer: composer require power-modules/router
 use Modular\Framework\PowerModule\Contract\ImportsComponents;
 use Modular\Framework\PowerModule\ImportItem;
+use Modular\Router\Contract\HasRoutes;
+use Modular\Router\Route;
 
 class ConsumerModule implements PowerModule, ImportsComponents, HasRoutes
 {
@@ -314,6 +316,7 @@ class ConsumerModule implements PowerModule, ImportsComponents, HasRoutes
     }
 }
 ```
+
 
 ## Development & Testing
 
