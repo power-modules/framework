@@ -53,6 +53,11 @@ Install via Composer:
 composer require power-modules/framework
 ```
 
+## 📚 Documentation
+
+- **[Getting Started](docs/hello-module.md)** - Build your first module with a simple hello world example
+- **[Architecture Overview](docs/lifecycle.md)** - Understanding the module lifecycle and framework internals
+
 ## Quick Start
 
 ```php
