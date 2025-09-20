@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Modular\Framework\Test\App;
 
 use Modular\Framework\App\App;
-use Modular\Framework\App\ModularAppFactory;
+use Modular\Framework\App\ModularAppBuilder;
+use Modular\Framework\Cache\FilesystemCache;
 use Modular\Framework\Test\App\Sample\LibA\LibAExternalService;
 use Modular\Framework\Test\App\Sample\LibA\LibAInternalService;
 use Modular\Framework\Test\App\Sample\LibA\LibAModule;
@@ -22,7 +23,10 @@ class AppTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->app = ModularAppFactory::forAppRoot(__DIR__);
+        $this->app = new ModularAppBuilder(__DIR__)
+            ->withCache(new FilesystemCache(sys_get_temp_dir()))
+            ->build()
+        ;
     }
 
     public function testAppRespectsExportsComponentsInterface(): void
@@ -69,28 +73,5 @@ class AppTest extends TestCase
             LibBService1::class,
             $libCServiceDependsOnLibBService1->libBService1,
         );
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        $cacheDir = __DIR__ . '/cache';
-        if (!is_dir($cacheDir)) {
-            return;
-        }
-
-        $files = glob($cacheDir . '/*');
-        if ($files === false) {
-            return;
-        }
-
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-
-        rmdir($cacheDir);
     }
 }
