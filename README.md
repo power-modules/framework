@@ -77,7 +77,7 @@ class LibraryCModule implements PowerModule, ImportsComponents
     public static function imports(): array
     {
         return [
-            new ImportItem(LibraryBModule::class, [LibraryBComponent2::class]),
+            ImportItem::create(LibraryBModule::class, LibraryBComponent2::class),
         ];
     }
 
@@ -126,6 +126,136 @@ $service = $modularApp->get(\VendorB\LibraryB\LibraryBComponent2::class);
         - \VendorB\LibraryB\LibraryBComponent2::class => (alias for the service in LibraryBModule's container)
 ```
 
+## API Reference
+
+### Core Interfaces
+
+#### PowerModule Interface
+
+```php
+interface PowerModule
+{
+    public function register(ConfigurableContainerInterface $container): void;
+}
+```
+
+#### ConfigurableContainer Interface
+
+The "set" method is your entry point to define services in the container.
+
+```php
+interface ConfigurableContainerInterface extends ContainerInterface
+{
+    public function set(string $id, mixed $value = null, string $instanceResolver = DefaultInstanceResolver::class): ServiceDefinition;
+
+    public function addServiceDefinition(string $id, ServiceDefinition $serviceDefinition): ConfigurableContainerInterface;
+
+    public function getServiceDefinition(string $id): ServiceDefinition;
+}
+```
+
+#### App Interface
+
+```php
+class App implements ContainerInterface
+{
+    public function registerModules(array $powerModuleClassNames): self;
+    
+    public function addPowerModuleSetup(CanSetupPowerModule $canSetupPowerModule): self;
+    
+    public function get(string $id): mixed;
+    
+    public function has(string $id): bool;
+}
+```
+
+### Module Contracts
+
+- **`ExportsComponents`**: Implement to make module components available to other modules
+- **`ImportsComponents`**: Implement to depend on components from other modules
+- **`CanCreatePowerModuleInstance`**: Implement to customize module instantiation
+- **`CanSetupPowerModule`**: Implement to customize module setup behavior (see [Power Modules Router Documentation](https://github.com/power-modules/router) for an example)
+
+### Service Definition
+
+```php
+class ServiceDefinition
+{
+    public function addArguments(array $dependencies): self;
+    
+    public function addMethod(string $methodName, mixed $args): self;
+    
+    public function resolve(): mixed;
+}
+```
+
+### Import/Export System
+
+#### ImportItem
+
+```php
+class ImportItem
+{
+    public static function create(string $powerModuleName, string ...$itemsToImport): self;
+}
+```
+
+#### Example Usage
+
+```php
+// Exporting components
+class MyModule implements PowerModule, ExportsComponents
+{
+    public static function exports(): array
+    {
+        return [MyService::class, MyMiddleware::class];
+    }
+    
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        $container->set(MyRepository::class, MyRepository::class);
+        $container->set(
+            MyService::class,
+            MyService::class,
+        )->addArguments([MyRepository::class]);
+        $container->set(
+            MyMiddleware::class,
+            MyMiddleware::class,
+        )->addArguments([MyService::class]);
+    }
+}
+
+// Importing components
+class ConsumerModule implements PowerModule, ImportsComponents, HasRoutes
+{
+    public static function imports(): array
+    {
+        return [
+            ImportItem::create(MyModule::class, MyService::class, MyMiddleware::class),
+        ];
+    }
+
+    public function getRoutes(): array
+    {
+        return [
+            Route::get('/some-endpoint', [ConsumerService::class, 'handle'])
+                ->middleware([MyMiddleware::class]),
+        ];
+    }
+
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        // MyService and MyMiddleware are now available for injection
+        $container->set(
+            ConsumerService::class,
+            ConsumerService::class,
+        )->addArguments([
+            MyService::class,
+        ]);
+    }
+}
+```
+
 ## Development & Testing
 
 Run tests, code style checks, and static analysis using the Makefile:
@@ -136,3 +266,21 @@ make codestyle    # Check code style with PHP CS Fixer
 make phpstan      # Run static analysis
 make devcontainer # Build development container
 ```
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat(...): added amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Support
+
+- [Power Modules Framework Documentation](https://github.com/power-modules/framework)
+- [League/Route Documentation](https://route.thephpleague.com/)
+- [PSR-15 Middleware Documentation](https://www.php-fig.org/psr/psr-15/)
