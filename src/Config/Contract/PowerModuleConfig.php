@@ -3,18 +3,19 @@
 namespace Modular\Framework\Config\Contract;
 
 use BackedEnum;
+use SplObjectStorage;
 use UnitEnum;
-use WeakMap;
 
 abstract class PowerModuleConfig
 {
     /**
-     * @param WeakMap<\BackedEnum|\UnitEnum|object,mixed> $properties
-     * @return void
+     * @var SplObjectStorage<\BackedEnum|\UnitEnum,mixed>
      */
-    final public function __construct(
-        protected WeakMap $properties = new WeakMap(),
-    ) {
+    protected SplObjectStorage $properties;
+
+    final public function __construct()
+    {
+        $this->properties = new SplObjectStorage();
     }
 
     public static function create(): static
@@ -34,7 +35,9 @@ abstract class PowerModuleConfig
      */
     public function getAll(): iterable
     {
-        return $this->properties;
+        foreach ($this->properties as $enum) {
+            yield $enum => $this->properties->getInfo();
+        }
     }
 
     public function has(BackedEnum|UnitEnum $configPropertyEnum): bool
