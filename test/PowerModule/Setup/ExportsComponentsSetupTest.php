@@ -41,7 +41,7 @@ class ExportsComponentsSetupTest extends TestCase
             $config,
         );
 
-        (new ExportsComponentsSetup())->setup($dto);
+        new ExportsComponentsSetup()->setup($dto);
 
         $expected = [
             ['foo', $moduleContainer, InstanceViaContainerResolver::class],
@@ -62,7 +62,7 @@ class ExportsComponentsSetupTest extends TestCase
             $this->createMock(ConfigurableContainerInterface::class),
             $this->createMock(Config::class),
         );
-        (new ExportsComponentsSetup())->setup($dto);
+        new ExportsComponentsSetup()->setup($dto);
     }
 
     public function testSetupDoesNothingIfModuleDoesNotExportComponents(): void
@@ -77,7 +77,7 @@ class ExportsComponentsSetupTest extends TestCase
             $this->createMock(ConfigurableContainerInterface::class),
             $this->createMock(Config::class),
         );
-        (new ExportsComponentsSetup())->setup($dto);
+        new ExportsComponentsSetup()->setup($dto);
     }
 
     /**

@@ -42,7 +42,7 @@ class ImportsComponentsSetupTest extends TestCase
             $moduleContainer,
             $this->createMock(\Modular\Framework\App\Config\Config::class),
         );
-        (new ImportsComponentsSetup())->setup($dto);
+        new ImportsComponentsSetup()->setup($dto);
     }
 
     public function testSetupThrowsIfItemNotFound(): void
@@ -67,7 +67,7 @@ class ImportsComponentsSetupTest extends TestCase
             $this->createMock(\Modular\Framework\App\Config\Config::class),
         );
         $this->expectException(ContainerException::class);
-        (new ImportsComponentsSetup())->setup($dto);
+        new ImportsComponentsSetup()->setup($dto);
     }
 
     public function testSetupDoesNothingIfNotPostPhase(): void
@@ -91,7 +91,7 @@ class ImportsComponentsSetupTest extends TestCase
             $moduleContainer,
             $this->createMock(\Modular\Framework\App\Config\Config::class),
         );
-        (new ImportsComponentsSetup())->setup($dto);
+        new ImportsComponentsSetup()->setup($dto);
     }
 
     public function testSetupDoesNothingIfModuleDoesNotImportComponents(): void
@@ -111,7 +111,7 @@ class ImportsComponentsSetupTest extends TestCase
             $moduleContainer,
             $this->createMock(\Modular\Framework\App\Config\Config::class),
         );
-        (new ImportsComponentsSetup())->setup($dto);
+        new ImportsComponentsSetup()->setup($dto);
     }
 }
 

@@ -71,7 +71,7 @@ class HasConfigSetupTest extends TestCase
             $this->createMock(Config::class),
         );
         $mockLoader->expects($this->never())->method('getConfig');
-        (new HasConfigSetup($mockLoader))->setup($dto);
+        new HasConfigSetup($mockLoader)->setup($dto);
     }
 
     public function testSetupDoesNothingIfModuleDoesNotHaveConfig(): void
@@ -86,6 +86,6 @@ class HasConfigSetupTest extends TestCase
             $this->createMock(Config::class),
         );
         $mockLoader->expects($this->never())->method('getConfig');
-        (new HasConfigSetup($mockLoader))->setup($dto);
+        new HasConfigSetup($mockLoader)->setup($dto);
     }
 }

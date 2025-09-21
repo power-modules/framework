@@ -48,7 +48,7 @@ class FilesystemCache implements CacheInterface
 
         $expiresAt = null;
         if ($ttl instanceof DateInterval) {
-            $expiresAt = (new \DateTime())->add($ttl)->getTimestamp();
+            $expiresAt = new \DateTime()->add($ttl)->getTimestamp();
         } elseif (is_int($ttl)) {
             $expiresAt = time() + $ttl;
         }

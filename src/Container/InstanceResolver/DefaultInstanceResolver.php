@@ -56,7 +56,7 @@ class DefaultInstanceResolver implements InstanceResolverInterface, CanResolveVi
                             return $reflectionType->getName();
                         }
                     },
-                    (new \ReflectionFunction($dependency))->getParameters(),
+                    new \ReflectionFunction($dependency)->getParameters(),
                 );
 
                 $resolved[] = $this->resolve('', $dependency, $closureParams);

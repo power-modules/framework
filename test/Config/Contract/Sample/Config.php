@@ -16,7 +16,7 @@ class Config extends PowerModuleConfig
 
     public static function create(): static
     {
-        return (new static())
+        return new static()
             ->set(Setting::StoragePath, self::DEFAULT_STORAGE_PATH)
             ->set(Setting::AcceptedFileExtensions, self::DEFAULT_ACCEPTED_FILE_EXTENSIONS)
         ;

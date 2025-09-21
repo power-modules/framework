@@ -36,7 +36,7 @@ class ModularAppConfigInjectorTest extends TestCase
             $moduleContainer,
             $config,
         );
-        (new ModularAppConfigInjector())->setup($dto);
+        new ModularAppConfigInjector()->setup($dto);
     }
 
     public function testSetupDoesNothingIfConfigAlreadyPresent(): void
@@ -59,6 +59,6 @@ class ModularAppConfigInjectorTest extends TestCase
             $moduleContainer,
             $config,
         );
-        (new ModularAppConfigInjector())->setup($dto);
+        new ModularAppConfigInjector()->setup($dto);
     }
 }

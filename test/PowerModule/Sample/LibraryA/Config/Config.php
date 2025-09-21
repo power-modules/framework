@@ -13,7 +13,7 @@ class Config extends PowerModuleConfig
 
     public static function create(): static
     {
-        return (new static())
+        return new static()
             ->set(Setting::SettingA, 'value1')
             ->set(Setting::SettingB, 'value2')
         ;
