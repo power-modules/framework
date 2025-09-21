@@ -51,7 +51,7 @@ Steps to verify locally:
 
 # Docs
 - [ ] README updated if needed
-- [ ] Added/updated docs (e.g., docs/hello-module.md, docs/lifecycle.md)
+- [ ] Added/updated docs (e.g., docs/getting-started.md)
 
 # Breaking changes
 - [ ] No
