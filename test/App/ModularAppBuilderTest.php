@@ -78,7 +78,7 @@ class ModularAppBuilderTest extends TestCase
     public function testItCanBuildAppWithPowerSetup(): void
     {
         $mock = $this->createMock(CanSetupPowerModule::class);
-        $mock->expects(self::exactly(2))->method('setup');
+        $mock->expects(self::exactly(4))->method('setup');
         $this->getBuilderWithTempCachePath()->withPowerSetup($mock)->withModules(
             ConfigurableLibraryAModule::class,
         )->build();
