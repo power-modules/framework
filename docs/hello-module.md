@@ -1,4 +1,8 @@
-# Hello Module (minimal)
+# Hello Module Example
+
+> **📚 This page has been superseded by the new [Getting Started Guide](getting-started.md)** which provides a more comprehensive introduction to building modules.
+
+For a quick hello world example, see the "Your First Module" section in the [Getting Started Guide](getting-started.md).
 
 ```php
 <?php
