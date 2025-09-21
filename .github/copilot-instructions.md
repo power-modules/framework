@@ -15,6 +15,7 @@ The Modular Framework is designed to build modular PHP applications where each m
     - **Importing:** A module can consume components from other modules by implementing the `\Modular\Framework\PowerModule\Contract\ImportsComponents` interface. This makes dependencies between modules explicit and controlled.
 - **Application (`App`):** The `\Modular\Framework\App\App` class is the entry point of the application. It is responsible for registering modules and managing the root DI container.
 - **Dependency Sorting:** Module dependencies are resolved using an iterative topological sort algorithm (`\Modular\Framework\PowerModule\IterativeModuleDependencySorter`), which is then cached to improve performance on subsequent requests.
+- **Builder Pattern:** Applications are created using `ModularAppBuilder` with fluent configuration methods for dependency injection, caching, and module registration.
 
 ### Module Design Patterns
 
@@ -65,6 +66,17 @@ class ImportingModule implements PowerModule, ImportsComponents
 }
 ```
 
+**Application Builder Pattern:**
+```php
+$app = new ModularAppBuilder(__DIR__)
+    ->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, '/path/to/cache'))
+    ->withModules(ExportingModule::class, ImportingModule::class)
+    ->build();
+
+// Access exported services through the app container
+$service = $app->get(PublicService::class);
+```
+
 ## Key Components and Directories
 
 - `src/PowerModule/`: Contains the core interfaces and classes for creating modules (`PowerModule`, `ExportsComponents`, `ImportsComponents`, `ModuleDependencySorter`).
@@ -80,6 +92,8 @@ class ImportingModule implements PowerModule, ImportsComponents
 - Each test module has its own directory with service classes and module definition
 - Tests use `ModularAppBuilder` with temporary cache paths: `->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, sys_get_temp_dir()))`
 - Verify export isolation: internal services should not be accessible from the app container
+- Use `$app->has(ServiceClass::class)` to test service availability
+- Services are singletons within their containers: `assertSame($instance1, $instance2)`
 
 ## Developer Workflows
 
@@ -101,6 +115,9 @@ $container->set(ServiceClass::class, ServiceClass::class)
     ->addArguments([DependencyClass::class])
     ->addMethod('setLogger', [LoggerInterface::class]);
 ```
+
+**Method injection:** Use `addMethod()` for setter injection after constructor injection.
+**Arguments resolution:** Arguments are automatically resolved from the container using class names.
 
 ## Code Conventions
 
