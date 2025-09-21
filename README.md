@@ -25,7 +25,6 @@ composer require power-modules/framework
 ```
 
 ```php
-<?php
 use Modular\Framework\App\ModularAppBuilder;
 
 $app = new ModularAppBuilder(__DIR__)->build();
