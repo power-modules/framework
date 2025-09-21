@@ -220,6 +220,12 @@ class CustomSetup implements CanSetupPowerModule
     }
 }
 
+// Add setup during app building (preferred)
+$app = new ModularAppBuilder(__DIR__)
+    ->withPowerSetup(new CustomSetup())
+    ->build();
+
+// Or add setup after building
 $app->addPowerModuleSetup(new CustomSetup());
 ```
 

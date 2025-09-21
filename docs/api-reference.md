@@ -92,6 +92,7 @@ class App implements ContainerInterface
 
     /**
      * Register modules with the application.
+     * Note: Prefer using ModularAppBuilder::withModules() for better fluent API.
      * 
      * @param array<class-string<PowerModule>> $powerModuleClassNames
      */
@@ -99,6 +100,7 @@ class App implements ContainerInterface
 
     /**
      * Add setup extensions that run during module loading.
+     * Note: Prefer using ModularAppBuilder::withPowerSetup() for better fluent API.
      */
     public function addPowerModuleSetup(CanSetupPowerModule $canSetupPowerModule): self;
 }
@@ -137,6 +139,20 @@ class ModularAppBuilder
      * Override the default module resolver.
      */
     public function withModuleResolver(CanCreatePowerModuleInstance $moduleResolver): self;
+
+    /**
+     * Add custom power module setup handlers.
+     * 
+     * @param CanSetupPowerModule ...$setups
+     */
+    public function withPowerSetup(CanSetupPowerModule ...$setups): self;
+
+    /**
+     * Register modules to be loaded when the app is built.
+     * 
+     * @param class-string<PowerModule> ...$modules
+     */
+    public function withModules(string ...$modules): self;
 
     /**
      * Build the application instance.

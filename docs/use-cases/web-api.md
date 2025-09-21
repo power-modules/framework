@@ -334,16 +334,14 @@ use MyApi\Auth\AuthModule;
 use MyApi\Http\ApiModule;
 
 // Build the modular application with router
-$app = new ModularAppBuilder(__DIR__ . '/..')->build();
-
-// Add router setup - this wires modules with HasRoutes automatically
-$app->addPowerModuleSetup(new RoutingSetup());
-
-$app->registerModules([
-    RouterModule::class,  // Provides ModularRouterInterface
-    AuthModule::class,    // Provides authentication services
-    ApiModule::class,     // Implements HasRoutes with our API endpoints
-]);
+$app = new ModularAppBuilder(__DIR__ . '/..')
+    ->withPowerSetup(new RoutingSetup())  // Wires modules with HasRoutes automatically
+    ->withModules(
+        RouterModule::class,  // Provides ModularRouterInterface
+        AuthModule::class,    // Provides authentication services
+        ApiModule::class,     // Implements HasRoutes with our API endpoints
+    )
+    ->build();
 
 // Get the router (configured with all module routes)
 $router = $app->get(ModularRouterInterface::class);

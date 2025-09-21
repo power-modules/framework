@@ -127,7 +127,9 @@ if ($env === 'development') {
     $modules[] = RealExternalServicesModule::class;
 }
 
-$app->registerModules($modules);
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(...$modules)
+    ->build();
 ```
 
 ### **Testing Strategies**
@@ -137,11 +139,12 @@ class UserModuleTest extends TestCase
 {
     public function testUserCreation()
     {
-        $app = new ModularAppBuilder(__DIR__)->build();
-        $app->registerModules([
-            UserModule::class,
-            MockDatabaseModule::class, // Mock dependencies
-        ]);
+        $app = new ModularAppBuilder(__DIR__)
+            ->withModules(
+                UserModule::class,
+                MockDatabaseModule::class, // Mock dependencies
+            )
+            ->build();
         
         $userService = $app->get(UserService::class);
         // Test business logic
@@ -153,12 +156,13 @@ class UserOrderIntegrationTest extends TestCase
 {
     public function testUserCanPlaceOrder()
     {
-        $app = new ModularAppBuilder(__DIR__)->build();
-        $app->registerModules([
-            UserModule::class,
-            OrderModule::class,
-            DatabaseModule::class, // Real database for integration
-        ]);
+        $app = new ModularAppBuilder(__DIR__)
+            ->withModules(
+                UserModule::class,
+                OrderModule::class,
+                DatabaseModule::class, // Real database for integration
+            )
+            ->build();
         
         // Test cross-module interactions
     }

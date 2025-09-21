@@ -158,12 +158,11 @@ class OrdersIntegrationTest extends TestCase
     {
         $app = new ModularAppBuilder(__DIR__)
             ->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, sys_get_temp_dir()))
+            ->withModules(
+                AuthModule::class,
+                OrdersModule::class,
+            )
             ->build();
-            
-        $app->registerModules([
-            AuthModule::class,
-            OrdersModule::class,
-        ]);
         
         $orderService = $app->get(OrderService::class);
         $this->assertInstanceOf(OrderService::class, $orderService);
@@ -212,7 +211,9 @@ if ($environment === 'development') {
     $modules[] = DebugModule::class;
 }
 
-$app->registerModules($modules);
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(...$modules)
+    ->build();
 ```
 
 ## Best Practices

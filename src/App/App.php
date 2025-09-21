@@ -39,6 +39,7 @@ class App implements ContainerInterface
      * @param class-string<T> $id
      *
      * @return T
+     * Trade-off: the template helps with static analysis, but client code could complain if a simple string (not a class name) is used as $id
      */
     public function get(string $id)
     {

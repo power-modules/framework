@@ -27,11 +27,12 @@ composer require power-modules/framework
 ```php
 use Modular\Framework\App\ModularAppBuilder;
 
-$app = new ModularAppBuilder(__DIR__)->build();
-$app->registerModules([
-    \MyApp\Auth\AuthModule::class,
-    \MyApp\Orders\OrdersModule::class,
-]);
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(
+        \MyApp\Auth\AuthModule::class,
+        \MyApp\Orders\OrdersModule::class,
+    )
+    ->build();
 
 // Get any exported service
 $orderService = $app->get(\MyApp\Orders\OrderService::class);

@@ -267,12 +267,13 @@ use App\ETL\EtlRunner;
 use Modular\Framework\App\ModularAppBuilder;
 
 // Build the ETL application
-$app = new ModularAppBuilder(__DIR__)->build();
-$app->registerModules([
-    ExtractModule::class,
-    TransformModule::class,
-    LoadModule::class,
-]);
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(
+        ExtractModule::class,
+        TransformModule::class,
+        LoadModule::class,
+    )
+    ->build();
 
 // Run ETL jobs
 $etlRunner = $app->get(EtlRunner::class);
@@ -308,8 +309,9 @@ $command = $argv[1] ?? '';
 $source = $argv[2] ?? '';
 $target = $argv[3] ?? '';
 
-$app = new ModularAppBuilder(__DIR__)->build();
-$app->registerModules([ExtractModule::class, TransformModule::class, LoadModule::class]);
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(ExtractModule::class, TransformModule::class, LoadModule::class)
+    ->build();
 
 $etlRunner = $app->get(EtlRunner::class);
 
@@ -335,11 +337,12 @@ class TransformModuleTest extends TestCase
     public function testDataTransformation()
     {
         // Test transform module with mock extractors
-        $app = new ModularAppBuilder(__DIR__)->build();
-        $app->registerModules([
-            MockExtractModule::class, // Mock data sources
-            TransformModule::class,   // Real transformation logic
-        ]);
+        $app = new ModularAppBuilder(__DIR__)
+            ->withModules(
+                MockExtractModule::class, // Mock data sources
+                TransformModule::class,   // Real transformation logic
+            )
+            ->build();
 
         $pipeline = $app->get(DataPipeline::class);
         // Test transformation rules

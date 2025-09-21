@@ -50,8 +50,9 @@ final readonly class HelloModule implements PowerModule, ExportsComponents
 }
 
 // Build and use the application
-$app = new ModularAppBuilder(__DIR__)->build();
-$app->registerModules([HelloModule::class]);
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(HelloModule::class)
+    ->build();
 
 // Get the exported service
 $greeter = $app->get(Greeter::class);
