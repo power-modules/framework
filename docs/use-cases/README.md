@@ -174,4 +174,4 @@ class UserOrderIntegrationTest extends TestCase
 Choose an example that matches your use case:
 - **Building APIs?** Start with [Web API example](web-api.md)
 - **Processing data?** Check out [ETL Pipeline](etl-pipeline.md)  
-- **Need more patterns?** Explore [Advanced Patterns](advanced-patterns.md)
+- **Need more patterns?** Explore [Advanced Patterns](../advanced-patterns.md)

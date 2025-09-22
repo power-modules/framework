@@ -44,7 +44,7 @@ $orderService = $app->get(\MyApp\Orders\OrderService::class);
 |-------|-------------|
 | **[Getting Started](docs/getting-started.md)** | Build your first module in 5 minutes |
 | **[Architecture](docs/architecture.md)** | Deep dive into module system, containers, and lifecycle |
-| **[Use Cases](docs/use-cases/README.md)** | Examples for web apps, CLI tools, ETL pipelines, and more |
+| **[Use Cases](docs/use-cases/README.md)** | Examples for web apps, ETL pipelines, and more |
 | **[API Reference](docs/api-reference.md)** | Complete interface and class documentation |
 | **[Advanced Patterns](docs/advanced-patterns.md)** | Plugin systems, composition patterns, performance tips |
 | **[Migration Guide](docs/migration-guide.md)** | Convert existing applications to use the framework |
