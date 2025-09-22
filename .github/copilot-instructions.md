@@ -4,18 +4,20 @@ This document provides guidance for AI coding agents to effectively contribute t
 
 ## Big Picture Architecture
 
-The Modular Framework is designed to build modular PHP applications where each module is a self-contained unit with its own Dependency Injection (DI) container, promoting encapsulation and clear boundaries.
+The Modular Framework is a **general-purpose modular architecture framework** for PHP that builds applications where each module is a self-contained unit with its own Dependency Injection (DI) container, promoting true encapsulation and clear boundaries. It's designed for any PHP system: CLI tools, data pipelines, background processors, web APIs, and complex applications that benefit from modular design.
 
 ### Core Concepts
 
-- **Modules (`PowerModule`):** The fundamental building blocks of the framework. Each module has its own DI container and can register its own components. Key interface: `\Modular\Framework\PowerModule\Contract\PowerModule`.
+- **Modules (`PowerModule`):** The fundamental building blocks of the framework. Each module has its own isolated DI container and can register its own components. Key interface: `\Modular\Framework\PowerModule\Contract\PowerModule`.
 - **Dependency Injection (`Container`):** The framework uses a custom DI container (`\Modular\Framework\Container\ConfigurableContainer`) that allows for fine-grained control over object instantiation and dependency management. The `\Modular\Framework\Container\ServiceDefinition` class is used to define how components are created and configured.
-- **Import/Export Mechanism:** Modules can share components with each other through an explicit import/export mechanism.
+- **Import/Export Mechanism:** Modules can share components with each other through an explicit import/export mechanism that makes module relationships visible and controlled.
     - **Exporting:** A module can expose its components to other modules by implementing the `\Modular\Framework\PowerModule\Contract\ExportsComponents` interface.
     - **Importing:** A module can consume components from other modules by implementing the `\Modular\Framework\PowerModule\Contract\ImportsComponents` interface. This makes dependencies between modules explicit and controlled.
+- **PowerModuleSetup:** The framework's most powerful feature - a mechanism that allows extending module functionality without breaking encapsulation. This is how the import/export system itself is built! Extensions can add capabilities like routing, events, validation, etc. across ALL modules automatically.
 - **Application (`App`):** The `\Modular\Framework\App\App` class is the entry point of the application. It is responsible for registering modules and managing the root DI container.
 - **Dependency Sorting:** Module dependencies are resolved using an iterative topological sort algorithm (`\Modular\Framework\PowerModule\IterativeModuleDependencySorter`), which is then cached to improve performance on subsequent requests.
-- **Builder Pattern:** Applications are created using `ModularAppBuilder` with fluent configuration methods for dependency injection, caching, and module registration.
+- **Builder Pattern:** Applications are created using `ModularAppBuilder` with fluent configuration methods for dependency injection, caching, module registration, and PowerModuleSetup extensions.
+- **Microservice Evolution:** The framework is designed with a clear evolution path from modular monolith to microservices, where module boundaries naturally become service boundaries.
 
 ### Module Design Patterns
 
@@ -66,16 +68,68 @@ class ImportingModule implements PowerModule, ImportsComponents
 }
 ```
 
-**Application Builder Pattern:**
+**Application Builder Pattern with PowerModuleSetup:**
 ```php
 $app = new ModularAppBuilder(__DIR__)
     ->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, '/path/to/cache'))
     ->withModules(ExportingModule::class, ImportingModule::class)
+    ->addPowerModuleSetup(new RoutingSetup())    // Add HTTP routing capabilities
+    ->addPowerModuleSetup(new EventBusSetup())   // Add event handling
     ->build();
 
 // Access exported services through the app container
 $service = $app->get(PublicService::class);
 ```
+
+**PowerModuleSetup Extension Pattern:**
+```php
+// PowerModuleSetup allows extending module functionality without breaking encapsulation
+class CustomSetup implements CanSetupPowerModule
+{
+    public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
+    {
+        // Add capabilities to ALL modules automatically
+        // This pattern is used by extensions like power-modules/router
+    }
+}
+```
+
+## Key Features for AI Development
+
+When working with the framework, keep these key architectural benefits in mind:
+
+- **True Encapsulation**: Each module has its own isolated DI container, preventing accidental coupling
+- **Explicit Dependencies**: Import/export contracts make module relationships visible and controllable
+- **PowerModuleSetup Magic**: Extensions can add functionality to all modules without breaking encapsulation
+- **Microservice Ready**: Module boundaries are designed to become service boundaries naturally
+- **Plugin-Ready Architecture**: Third-party modules can extend functionality safely
+- **Team Scalability**: Different teams can own different modules independently
+- **Better Testing**: Modules can be tested in isolation with their own containers
+
+## Microservice Evolution Path
+
+The framework is designed with a clear evolution path from modular monolith to microservices:
+
+**Today (Modular Monolith):**
+```php
+class UserModule implements PowerModule, ExportsComponents {
+    public static function exports(): array {
+        return [UserService::class];
+    }
+}
+
+class OrderModule implements PowerModule, ImportsComponents {
+    public static function imports(): array {
+        return [ImportItem::create(UserModule::class, UserService::class)];
+    }
+}
+```
+
+**Tomorrow (Microservices):**
+- `UserModule` → User API service
+- `OrderModule` → Order API service  
+- Import/export contracts → HTTP API contracts
+- Zero architectural changes needed!
 
 ## Key Components and Directories
 
@@ -94,6 +148,17 @@ $service = $app->get(PublicService::class);
 - Verify export isolation: internal services should not be accessible from the app container
 - Use `$app->has(ServiceClass::class)` to test service availability
 - Services are singletons within their containers: `assertSame($instance1, $instance2)`
+- Test PowerModuleSetup extensions to ensure they work across all modules
+
+## Ecosystem and Extensions
+
+The framework supports a rich ecosystem of extensions through PowerModuleSetup:
+
+- **[power-modules/router](https://github.com/power-modules/router)**: HTTP routing with PSR-15 middleware support
+- **power-modules/events**: Event-driven architecture (Coming soon!)
+- **Custom extensions**: Authentication, logging, validation, and other cross-cutting concerns
+
+Extensions work across ALL modules automatically while maintaining module isolation and testability.
 
 ## Developer Workflows
 

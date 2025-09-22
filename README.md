@@ -8,11 +8,13 @@
 
 A **general-purpose modular architecture framework** for PHP. Build applications where each module has its own dependency injection container, with carefully controlled sharing through explicit import/export contracts.
 
-> **💡 Not just for web!** Perfect for CLI tools, data pipelines, background processors, APIs, and any complex PHP system that benefits from clear module boundaries.
+> **💡 Versatile:** Works well for CLI tools, data pipelines, background processors, APIs, and complex PHP applications that benefit from clear module boundaries.
 
 ## ✨ Why Modular Framework?
 
 - **🔒 True Encapsulation**: Each module has its own isolated DI container
+- **⚡ PowerModuleSetup**: Extend module functionality without breaking encapsulation
+- **🚀 Microservice Ready**: Isolated modules can easily become independent services
 - **📋 Explicit Dependencies**: Import/export contracts make relationships visible  
 - **🧪 Better Testing**: Test modules in isolation with their own containers
 - **👥 Team Scalability**: Different teams can own different modules
@@ -37,6 +39,57 @@ $app = new ModularAppBuilder(__DIR__)
 // Get any exported service
 $orderService = $app->get(\MyApp\Orders\OrderService::class);
 ```
+
+## ⚡ PowerModuleSetup Extension System
+
+A key feature of the framework is **PowerModuleSetup** - a mechanism that allows extending module functionality without breaking encapsulation. This is how the import/export system itself is built!
+
+```php
+// Extend modules with powerful setups
+$app = new ModularAppBuilder(__DIR__)
+    ->withModules(UserModule::class, OrderModule::class)
+    ->addPowerModuleSetup(new RoutingSetup())    // Add HTTP routing capabilities to modules
+    ->addPowerModuleSetup(new EventBusSetup())   // Add event publishing and handling
+    ->build();
+```
+
+**Real-world extensions:**
+- [**power-modules/router**](https://github.com/power-modules/router) - HTTP routing with PSR-15 middleware
+- **power-modules/events** Event-driven architecture (Coming soon!)
+- **Custom setups** - Authentication, logging, validation, you name it!
+
+**Key benefits:**
+- Modules remain completely isolated and testable
+- Extensions work across ALL modules automatically
+- No coupling between core framework and extensions
+- Enables building ecosystems of reusable functionality
+
+## 🚀 Microservice Evolution Path
+
+Start with a modular monolith, evolve to microservices naturally:
+
+```php
+// Today: Modular monolith
+class UserModule implements PowerModule, ExportsComponents {
+    public static function exports(): array {
+        return [UserService::class];
+    }
+}
+
+class OrderModule implements PowerModule, ImportsComponents {
+    public static function imports(): array {
+        return [ImportItem::create(UserModule::class, UserService::class)];
+    }
+}
+```
+
+**Later: Independent microservices**
+- `UserModule` → User API service
+- `OrderModule` → Order API service
+- Import/export contracts → HTTP API contracts
+- Minimal architectural changes needed
+
+Your modules are designed with clear boundaries. When you're ready to scale, the module structure supports splitting them into separate services.
 
 ## 📚 Documentation
 
