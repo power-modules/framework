@@ -2,44 +2,299 @@
 
 This section covers advanced patterns and techniques for building sophisticated applications with the Modular Framework.
 
-## Plugin Systems
+## Plugin Ecosystems
 
-Create extensible applications where third-party code can add functionality through modules:
+The Modular Framework enables building **entire ecosystems** of interoperable packages. Using PowerModuleSetup, you can create domain-specific plugin systems that third parties can extend.
+
+### The Ecosystem Architecture
+
+**Three-layer architecture for maximum extensibility:**
+
+```
+Layer 1: Core Framework
+├── power-modules/framework    # The modular foundation
+├── power-modules/plugin       # Generic plugin interfaces
+
+Layer 2: Domain Plugin Systems  
+├── power-cms/core            # CMS plugin system
+├── power-gateway/core        # API Gateway plugin system  
+├── power-etl/core            # ETL pipeline plugin system
+└── power-cli/core            # CLI tools plugin system
+
+Layer 3: Domain-Specific Plugins
+├── power-cms/blog           # Blog functionality
+├── power-cms/ecommerce      # E-commerce features
+├── power-gateway/auth       # Authentication middleware
+├── power-gateway/ratelimit  # Rate limiting
+├── power-etl/csv            # CSV processing
+└── power-cli/docker         # Docker management
+```
+
+### Generic Plugin Foundation
 
 ```php
-// Core app module
-class CoreAppModule implements PowerModule, ExportsComponents 
+// power-modules/plugin - Generic plugin interfaces
+interface PluginInterface
 {
-    public static function exports(): array
-    {
-        return [PluginRegistry::class, EventBus::class];
-    }
-    
-    public function register(ConfigurableContainerInterface $container): void
-    {
-        $container->set(PluginRegistry::class, PluginRegistry::class);
-        $container->set(EventBus::class, EventBus::class);
-    }
+    public function getName(): string;
+    public function getVersion(): string;
+    public function initialize(): void;
 }
 
-// Third-party plugin module
-class ThirdPartyPlugin implements PowerModule, ImportsComponents
+/**
+ * @template T
+ */
+interface PluginRegistryInterface
 {
-    public static function imports(): array
-    {
-        return [
-            ImportItem::create(CoreAppModule::class, PluginRegistry::class, EventBus::class),
-        ];
-    }
+    /** @param T $plugin */
+    public function register(object $plugin): void;
     
-    public function register(ConfigurableContainerInterface $container): void
+    /** @return array<string, T> */
+    public function getAll(): array;
+    
+    public function get(string $name): object;
+}
+
+// Universal plugin discovery via PowerModuleSetup
+class PluginSetup implements CanSetupPowerModule
+{
+    public function setup(PowerModuleSetupDto $dto): void
     {
-        $container->set(MyPluginService::class, MyPluginService::class)
-            ->addArguments([EventBus::class])
-            ->addMethod('registerWith', [PluginRegistry::class]);
+        // Works with ANY plugin interface that extends PluginInterface
+        if (!$dto->powerModule instanceof PluginInterface) {
+            return;
+        }
+
+        // Auto-register with domain-specific registry
+        $registry = $dto->rootContainer->get(PluginRegistryInterface::class);
+        $registry->register($dto->powerModule);
+        
+        // Initialize the plugin
+        $dto->powerModule->initialize();
     }
 }
 ```
+
+### Domain-Specific Ecosystems
+
+Each ecosystem extends the base pattern for their specific needs:
+
+#### **CMS Ecosystem**
+```php
+// power-cms/core - CMS-specific plugin system
+interface CmsPluginInterface extends PluginInterface
+{
+    public function getContentTypes(): array;
+    public function getAdminRoutes(): array;
+}
+
+class CmsPluginRegistry implements PluginRegistryInterface
+{
+    private array $plugins = [];
+    private array $contentTypes = [];
+
+    public function register(object $plugin): void
+    {
+        if (!$plugin instanceof CmsPluginInterface) {
+            throw new InvalidArgumentException('Must implement CmsPluginInterface');
+        }
+        
+        $this->plugins[$plugin->getName()] = $plugin;
+        
+        // Register CMS-specific features
+        foreach ($plugin->getContentTypes() as $contentType) {
+            $this->contentTypes[$contentType->getTypeName()] = $contentType;
+        }
+    }
+    
+    public function getContentTypes(): array
+    {
+        return $this->contentTypes;
+    }
+}
+
+// Third-party CMS plugins
+class BlogPlugin implements PowerModule, CmsPluginInterface
+{
+    public function getName(): string { return 'Blog Plugin'; }
+    public function getVersion(): string { return '1.0.0'; }
+    
+    public function getContentTypes(): array
+    {
+        return [new BlogContentType()];
+    }
+    
+    public function initialize(): void
+    {
+        // Plugin initialization
+    }
+}
+```
+
+#### **API Gateway Ecosystem**
+```php
+// power-gateway/core - Gateway-specific plugin system  
+interface GatewayPluginInterface extends PluginInterface
+{
+    public function getMiddleware(): array;
+    public function getRoutes(): array;
+}
+
+class GatewayPluginRegistry implements PluginRegistryInterface
+{
+    private array $plugins = [];
+    private array $middleware = [];
+
+    public function register(object $plugin): void
+    {
+        if (!$plugin instanceof GatewayPluginInterface) {
+            throw new InvalidArgumentException('Must implement GatewayPluginInterface');
+        }
+        
+        $this->plugins[$plugin->getName()] = $plugin;
+        
+        // Register gateway-specific features
+        foreach ($plugin->getMiddleware() as $middleware) {
+            $this->middleware[] = $middleware;
+        }
+    }
+    
+    public function getAllMiddleware(): array
+    {
+        return $this->middleware;
+    }
+}
+
+// Third-party gateway plugins
+class AuthPlugin implements PowerModule, GatewayPluginInterface
+{
+    public function getName(): string { return 'JWT Auth Plugin'; }
+    public function getVersion(): string { return '2.1.0'; }
+    
+    public function getMiddleware(): array
+    {
+        return [new JwtAuthMiddleware()];
+    }
+    
+    public function initialize(): void
+    {
+        // Auth plugin initialization
+    }
+}
+```
+
+#### **ETL Processing Ecosystem**
+```php
+// power-etl/core - ETL-specific plugin system
+interface EtlPluginInterface extends PluginInterface
+{
+    public function getProcessors(): array;
+    public function getConnectors(): array;
+}
+
+class EtlPluginRegistry implements PluginRegistryInterface
+{
+    private array $plugins = [];
+    private array $processors = [];
+
+    public function register(object $plugin): void
+    {
+        if (!$plugin instanceof EtlPluginInterface) {
+            throw new InvalidArgumentException('Must implement EtlPluginInterface');
+        }
+        
+        $this->plugins[$plugin->getName()] = $plugin;
+        
+        // Register ETL-specific components
+        foreach ($plugin->getProcessors() as $processor) {
+            $this->processors[$processor->getName()] = $processor;
+        }
+    }
+    
+    public function getProcessors(): array
+    {
+        return $this->processors;
+    }
+}
+
+// Third-party ETL plugins
+class CsvPlugin implements PowerModule, EtlPluginInterface
+{
+    public function getName(): string { return 'CSV Processor'; }
+    public function getVersion(): string { return '1.5.2'; }
+    
+    public function getProcessors(): array
+    {
+        return [new CsvReader(), new CsvWriter()];
+    }
+    
+    public function initialize(): void
+    {
+        // CSV plugin initialization
+    }
+}
+```
+
+### Universal Application Pattern
+
+**Every ecosystem uses the same application pattern:**
+
+```php
+// CMS Application
+$cmsApp = new ModularAppBuilder(__DIR__)
+    ->addPowerModuleSetup(new PluginSetup())  // Universal plugin discovery
+    ->withModules(
+        CmsCoreModule::class,        // Domain core
+        BlogPlugin::class,           // Third-party plugins
+        EcommercePlugin::class,
+        GalleryPlugin::class,
+    )
+    ->build();
+
+// API Gateway Application
+$gatewayApp = new ModularAppBuilder(__DIR__)
+    ->addPowerModuleSetup(new PluginSetup())  // Same setup!
+    ->withModules(
+        GatewayCoreModule::class,    // Domain core
+        AuthPlugin::class,           // Third-party plugins
+        RateLimitPlugin::class,
+        LoggingPlugin::class,
+    )
+    ->build();
+
+// ETL Application  
+$etlApp = new ModularAppBuilder(__DIR__)
+    ->addPowerModuleSetup(new PluginSetup())  // Same setup!
+    ->withModules(
+        EtlCoreModule::class,        // Domain core
+        CsvPlugin::class,            // Third-party plugins
+        DatabasePlugin::class,
+        TransformPlugin::class,
+    )
+    ->build();
+```
+
+### Ecosystem Benefits
+
+**For Framework Users:**
+- **Consistent patterns** across all domains
+- **Universal plugin discovery** via PowerModuleSetup
+- **Type-safe extensibility** through domain interfaces
+- **Zero-config plugin loading** - just add modules
+
+**For Ecosystem Builders:**
+- **Proven architecture** to build upon
+- **PowerModuleSetup integration** for automatic discovery  
+- **Domain-specific customization** while maintaining compatibility
+- **Interoperable ecosystems** all built on the same foundation
+
+**For Plugin Developers:**
+- **Familiar patterns** across different ecosystems
+- **Automatic registration** via the universal setup
+- **Clear contracts** through domain-specific interfaces
+- **Isolated development** - plugins don't interfere with each other
+
+This architecture enables building **frameworks for frameworks** - where the Modular Framework provides the foundation for entire ecosystems of interoperable packages!
 
 ## Multi-Environment Configuration
 

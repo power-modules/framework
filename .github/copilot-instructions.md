@@ -73,8 +73,8 @@ class ImportingModule implements PowerModule, ImportsComponents
 $app = new ModularAppBuilder(__DIR__)
     ->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, '/path/to/cache'))
     ->withModules(ExportingModule::class, ImportingModule::class)
-    ->addPowerModuleSetup(new RoutingSetup())    // Add HTTP routing capabilities
-    ->addPowerModuleSetup(new EventBusSetup())   // Add event handling
+    ->addPowerModuleSetup(new RoutingSetup())    // Adds HTTP routing to modules implementing HasRoutes interface
+    ->addPowerModuleSetup(new EventBusSetup())   // Pulls module events into a central event bus
     ->build();
 
 // Access exported services through the app container

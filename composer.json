@@ -1,7 +1,7 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
     "name": "power-modules/framework",
-    "description": "A powerful modular PHP framework with encapsulated modules, each having its own DI container and explicit import/export mechanisms",
+    "description": "Framework for building modular PHP applications and plugin ecosystems with encapsulated modules and PowerModuleSetup extensions",
     "type": "library",
     "keywords": [
         "modular",
@@ -12,7 +12,10 @@
         "microservices",
         "modular-architecture",
         "di-container",
-        "component-based"
+        "component-based",
+        "plugin-system",
+        "ecosystem",
+        "powermodulesetup"
     ],
     "license": "MIT",
     "authors": [

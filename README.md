@@ -42,115 +42,82 @@ $orderService = $app->get(\MyApp\Orders\OrderService::class);
 
 ## ⚡ PowerModuleSetup Extension System
 
-A key feature of the framework is **PowerModuleSetup** - a mechanism that allows extending module functionality without breaking encapsulation. This is how the import/export system itself is built!
+The framework's most powerful feature - **PowerModuleSetup** allows extending module functionality without breaking encapsulation:
 
 ```php
-// Extend modules with powerful setups
 $app = new ModularAppBuilder(__DIR__)
     ->withModules(UserModule::class, OrderModule::class)
-    ->addPowerModuleSetup(new RoutingSetup())    // Add HTTP routing capabilities to modules
-    ->addPowerModuleSetup(new EventBusSetup())   // Add event publishing and handling
+    ->addPowerModuleSetup(new RoutingSetup())    // Adds HTTP routing to modules implementing HasRoutes interface
+    ->addPowerModuleSetup(new EventBusSetup())   // Pulls module events and handlers into a central event bus
     ->build();
 ```
 
-**Real-world extensions:**
+**Available extensions:**
 - [**power-modules/router**](https://github.com/power-modules/router) - HTTP routing with PSR-15 middleware
-- **power-modules/events** Event-driven architecture (Coming soon!)
-- **Custom setups** - Authentication, logging, validation, you name it!
-
-**Key benefits:**
-- Modules remain completely isolated and testable
-- Extensions work across ALL modules automatically
-- No coupling between core framework and extensions
-- Enables building ecosystems of reusable functionality
+    Coming soon:
+    - **power-modules/events** - Event-driven architecture
+    - **power-modules/dependency-graph** - Visualize module dependencies
+    - **power-modules/cli** - Build CLI applications with modular commands
+    - **power-modules/plugin** - Plugin architecture for third-party modules
+- **Your own!** - Create custom PowerModuleSetup implementations for your needs
 
 ## 🚀 Microservice Evolution Path
 
 Start with a modular monolith, evolve to microservices naturally:
 
+*Today: Modular monolith*
 ```php
-// Today: Modular monolith
 class UserModule implements PowerModule, ExportsComponents {
     public static function exports(): array {
-        return [UserService::class];
+        return [
+            UserService::class,
+        ];
     }
 }
 
 class OrderModule implements PowerModule, ImportsComponents {
     public static function imports(): array {
-        return [ImportItem::create(UserModule::class, UserService::class)];
+        return [
+            ImportItem::create(UserModule::class, UserService::class),
+        ];
     }
 }
 ```
 
-**Later: Independent microservices**
-- `UserModule` → User API service
-- `OrderModule` → Order API service
-- Import/export contracts → HTTP API contracts
-- Minimal architectural changes needed
+*Later: Independent microservices*
+```php
+class UserModule implements PowerModule, HasRoutes {
+    public function getRoutes(): array
+    {
+        return [
+            Route::get('/', UserController::class, 'list'),
+        ];
+    }
+
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        $container->set(UserController::class, UserController::class)
+            ->addArguments([UserService::class]);
+    }
+}
+
+class OrderModule implements PowerModule, ImportsComponents {
+    // Uses User HTTP API instead of direct service import
+}
+```
 
 Your modules are designed with clear boundaries. When you're ready to scale, the module structure supports splitting them into separate services.
 
 ## 📚 Documentation
 
-| Guide | Description |
-|-------|-------------|
-| **[Getting Started](docs/getting-started.md)** | Build your first module in 5 minutes |
-| **[Architecture](docs/architecture.md)** | Deep dive into module system, containers, and lifecycle |
-| **[Use Cases](docs/use-cases/README.md)** | Examples for web apps, ETL pipelines, and more |
-| **[API Reference](docs/api-reference.md)** | Complete interface and class documentation |
-| **[Advanced Patterns](docs/advanced-patterns.md)** | Plugin systems, composition patterns, performance tips |
-| **[Migration Guide](docs/migration-guide.md)** | Convert existing applications to use the framework |
+**📖 [Complete Documentation Hub](docs/README.md)** - Comprehensive guides, examples, and API reference
 
-## Real-World Examples
+**Quick Links:**
+- [Getting Started](docs/getting-started.md) - Build your first module in 5 minutes
+- [Use Cases](docs/use-cases/README.md) - Real-world examples (web APIs, ETL, etc.)
+- [Architecture](docs/architecture.md) - Deep dive into framework internals
 
-### Simple Module
-```php
-class OrdersModule implements PowerModule
-{
-    public function register(ConfigurableContainerInterface $container): void
-    {
-        $container->set(OrderService::class, OrderService::class)
-            ->addArguments([OrderRepository::class]);
-    }
-}
-```
 
-### Module with Exports
-```php
-class AuthModule implements PowerModule, ExportsComponents
-{
-    public static function exports(): array
-    {
-        return [UserService::class];
-    }
-    
-    public function register(ConfigurableContainerInterface $container): void
-    {
-        $container->set(UserService::class, UserService::class);
-        // Internal services stay private by default
-        $container->set(PasswordHasher::class, PasswordHasher::class);
-    }
-}
-```
-
-### Module with Imports
-```php
-class OrdersModule implements PowerModule, ImportsComponents
-{
-    public static function imports(): array
-    {
-        return [ImportItem::create(AuthModule::class, UserService::class)];
-    }
-    
-    public function register(ConfigurableContainerInterface $container): void
-    {
-        // UserService is now available for injection
-        $container->set(OrderService::class, OrderService::class)
-            ->addArguments([UserService::class]);
-    }
-}
-```
 
 ## Contributing
 
