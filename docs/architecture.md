@@ -1,5 +1,7 @@
 # Architecture Guide
 
+> **💡 Recommended Reading:** This document provides a technical deep dive into the internal workings of the framework. To first understand the high-level principles and strategic goals that drive this architecture, please read our **[Architectural Vision Document](../ARCHITECTURAL_VISION.md)**.
+
 Understanding the Modular Framework's core architectural principles.
 
 ## Core Philosophy

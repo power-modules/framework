@@ -20,6 +20,12 @@ A **general-purpose modular architecture framework** for PHP. Build applications
 - **👥 Team Scalability**: Different teams can own different modules
 - **🔌 Plugin-Ready**: Third-party modules extend functionality safely
 
+## 🚀 Architectural Vision
+
+This framework is not just another option; it introduces a new architectural paradigm to the PHP ecosystem. It is built on a foundation of **runtime-enforced encapsulation** and **true modularity**, inspired by the principles of mature systems like OSGi.
+
+To understand the core innovations and how this framework differs from established solutions like Symfony and Laravel, please read our **[Architectural Vision Document](ARCHITECTURAL_VISION.md)**.
+
 ## Quick Start
 
 ```bash

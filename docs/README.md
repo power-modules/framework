@@ -2,6 +2,10 @@
 
 Welcome to the complete guide for building modular PHP applications. Whether you're new to the framework or looking for advanced patterns, you'll find everything you need here.
 
+## 🚀 Architectural Vision
+
+Before diving into the technical details, it is highly recommended to read our **[Architectural Vision Document](../ARCHITECTURAL_VISION.md)**. It explains the core philosophy behind the framework, its key innovations, and how it compares to other solutions in the PHP ecosystem.
+
 ## 🎯 Quick Navigation
 
 | Document | Purpose | Best For |
