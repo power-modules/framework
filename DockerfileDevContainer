@@ -48,5 +48,9 @@ RUN dnf install -y zsh \
     --setopt install_weak_deps=0
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+RUN dnf install -y gzip \
+    --nodocs \
+    --setopt install_weak_deps=0
+
 # Cleanup space
 RUN dnf clean all -y
