@@ -20,6 +20,10 @@ Coding guidelines
 - Prefer explicit APIs and strong typing over “magic.”
 - Keep module boundaries crystal clear (imports/exports).
 - Favor small, composable units. Add tests with meaningful names.
+- Follow the interface naming guide:
+  - Core domain roles keep transparent noun names (e.g., `PowerModule`, `ModuleDependencySorter`).
+  - Opt-in capabilities use verb-style contracts (`Can*`, `Has*`, `Exports*`, `Imports*`) that setups can detect.
+  - Infrastructure abstractions or pairs beside concretes add the `Interface` suffix (e.g., `ConfigurableContainerInterface`).
 
 Pull requests
 - Keep PRs focused and incremental.
