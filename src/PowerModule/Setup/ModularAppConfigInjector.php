@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Modular\Framework\PowerModule\Setup;
 
 use Modular\Framework\App\Config\Config;
-use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
+use Modular\Framework\PowerModule\Contract\PowerModuleSetup;
 
-class ModularAppConfigInjector implements CanSetupPowerModule
+class ModularAppConfigInjector implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
     {

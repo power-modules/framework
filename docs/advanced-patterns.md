@@ -56,7 +56,7 @@ interface PluginRegistryInterface
 }
 
 // Universal plugin discovery via PowerModuleSetup
-class PluginSetup implements CanSetupPowerModule
+class PluginSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $dto): void
     {

@@ -207,7 +207,7 @@ class EmailModule implements PowerModule, HasConfig, ExportsComponents
 
 ### Setup Extensions
 ```php
-class CustomSetup implements CanSetupPowerModule
+class CustomSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $dto): void
     {

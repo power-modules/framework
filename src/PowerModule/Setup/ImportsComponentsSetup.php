@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Modular\Framework\PowerModule\Setup;
 
 use Modular\Framework\Container\Exception\ContainerException;
-use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
 use Modular\Framework\PowerModule\Contract\ImportsComponents;
+use Modular\Framework\PowerModule\Contract\PowerModuleSetup;
 
-class ImportsComponentsSetup implements CanSetupPowerModule
+class ImportsComponentsSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
     {

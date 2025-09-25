@@ -15,7 +15,7 @@ namespace Modular\Framework\PowerModule\Contract;
 
 use Modular\Framework\PowerModule\Setup\PowerModuleSetupDto;
 
-interface CanSetupPowerModule
+interface PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void;
 }

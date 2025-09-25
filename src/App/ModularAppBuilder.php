@@ -22,9 +22,9 @@ use Modular\Framework\Container\ConfigurableContainer;
 use Modular\Framework\Container\ConfigurableContainerInterface;
 use Modular\Framework\PowerModule\CachingModuleDependencySorter;
 use Modular\Framework\PowerModule\Contract\CanCreatePowerModuleInstance;
-use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
 use Modular\Framework\PowerModule\Contract\ModuleDependencySorter;
 use Modular\Framework\PowerModule\Contract\PowerModule;
+use Modular\Framework\PowerModule\Contract\PowerModuleSetup;
 use Modular\Framework\PowerModule\DefaultModuleResolver;
 use Modular\Framework\PowerModule\IterativeModuleDependencySorter;
 use Modular\Framework\PowerModule\Setup\ExportsComponentsSetup;
@@ -42,7 +42,7 @@ class ModularAppBuilder
     private ?CacheInterface $cache = null;
 
     /**
-     * @var array<string,CanSetupPowerModule>
+     * @var array<string,PowerModuleSetup>
      */
     private array $powerSetups = [];
 
@@ -91,7 +91,7 @@ class ModularAppBuilder
         return $this;
     }
 
-    public function withPowerSetup(CanSetupPowerModule ...$setups): self
+    public function withPowerSetup(PowerModuleSetup ...$setups): self
     {
         foreach ($setups as $setup) {
             $this->powerSetups[$setup::class] = $setup;

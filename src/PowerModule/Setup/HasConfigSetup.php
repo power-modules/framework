@@ -16,10 +16,10 @@ namespace Modular\Framework\PowerModule\Setup;
 use Modular\Framework\App\Config\Setting;
 use Modular\Framework\Config\Contract\HasConfig;
 use Modular\Framework\Config\Loader;
-use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
+use Modular\Framework\PowerModule\Contract\PowerModuleSetup;
 use RuntimeException;
 
-class HasConfigSetup implements CanSetupPowerModule
+class HasConfigSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
     {

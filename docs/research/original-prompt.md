@@ -10,7 +10,7 @@ I need you to conduct deep research to validate the uniqueness and novelty of ar
 **Technical Implementation**:
 ```php
 // Setup class that operates on modules
-class PluginSetup implements CanSetupPowerModule
+class PluginSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $dto): void
     {
@@ -155,7 +155,7 @@ interface PluginInterface
 }
 
 // Universal setup (works with ANY domain)
-class PluginSetup implements CanSetupPowerModule
+class PluginSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $dto): void
     {

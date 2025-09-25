@@ -84,7 +84,7 @@ $service = $app->get(PublicService::class);
 **PowerModuleSetup Extension Pattern:**
 ```php
 // PowerModuleSetup allows extending module functionality without breaking encapsulation
-class CustomSetup implements CanSetupPowerModule
+class CustomSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
     {

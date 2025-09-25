@@ -19,10 +19,10 @@ use Modular\Framework\App\ModularAppBuilder;
 use Modular\Framework\Container\ConfigurableContainer;
 use Modular\Framework\Container\ConfigurableContainerInterface;
 use Modular\Framework\PowerModule\Contract\CanCreatePowerModuleInstance;
-use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
 use Modular\Framework\PowerModule\Contract\ExportsComponents;
 use Modular\Framework\PowerModule\Contract\ModuleDependencySorter;
 use Modular\Framework\PowerModule\Contract\PowerModule;
+use Modular\Framework\PowerModule\Contract\PowerModuleSetup;
 use Modular\Framework\Test\PowerModule\Sample\LibraryA\ConfigurableLibraryAModule;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -86,7 +86,7 @@ class ModularAppBuilderTest extends TestCase
 
     public function testItCanBuildAppWithPowerSetup(): void
     {
-        $mock = $this->createMock(CanSetupPowerModule::class);
+        $mock = $this->createMock(PowerModuleSetup::class);
         $mock->expects(self::exactly(4))->method('setup');
         $this->getBuilderWithTempCachePath()->withPowerSetup($mock)->withModules(
             ConfigurableLibraryAModule::class,

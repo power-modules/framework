@@ -102,7 +102,7 @@ class App implements ContainerInterface
      * Add setup extensions that run during module loading.
      * Note: Prefer using ModularAppBuilder::withPowerSetup() for better fluent API.
      */
-    public function addPowerModuleSetup(CanSetupPowerModule $canSetupPowerModule): self;
+    public function addPowerModuleSetup(PowerModuleSetup $powerModuleSetup): self;
 }
 ```
 
@@ -143,9 +143,9 @@ class ModularAppBuilder
     /**
      * Add custom power module setup handlers.
      * 
-     * @param CanSetupPowerModule ...$setups
+     * @param PowerModuleSetup ...$setups
      */
-    public function withPowerSetup(CanSetupPowerModule ...$setups): self;
+    public function withPowerSetup(PowerModuleSetup ...$setups): self;
 
     /**
      * Register modules to be loaded when the app is built.
@@ -240,12 +240,12 @@ class ImportItem
 
 ## Setup System
 
-### CanSetupPowerModule
+### PowerModuleSetup
 
 Interface for setup extensions that run during module loading.
 
 ```php
-interface CanSetupPowerModule
+interface PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void;
 }

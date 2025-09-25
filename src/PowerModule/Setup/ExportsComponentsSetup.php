@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace Modular\Framework\PowerModule\Setup;
 
 use Modular\Framework\Container\InstanceResolver\InstanceViaContainerResolver;
-use Modular\Framework\PowerModule\Contract\CanSetupPowerModule;
 use Modular\Framework\PowerModule\Contract\ExportsComponents;
+use Modular\Framework\PowerModule\Contract\PowerModuleSetup;
 
-class ExportsComponentsSetup implements CanSetupPowerModule
+class ExportsComponentsSetup implements PowerModuleSetup
 {
     public function setup(PowerModuleSetupDto $powerModuleSetupDto): void
     {
