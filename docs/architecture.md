@@ -89,6 +89,72 @@ The framework automatically:
 3. **Sorts modules** topologically to ensure dependencies load first
 4. **Caches the dependency graph** for fast subsequent boots
 
+### Export Collision Detection
+
+The framework enforces strict export uniqueness to prevent silent bugs and unpredictable behavior:
+
+```php
+// ❌ This will throw ExportCollisionException
+class DatabaseModuleA implements PowerModule, ExportsComponents
+{
+    public static function exports(): array
+    {
+        return [DatabaseConnection::class];
+    }
+}
+
+class DatabaseModuleB implements PowerModule, ExportsComponents  
+{
+    public static function exports(): array
+    {
+        return [DatabaseConnection::class]; // Collision!
+    }
+}
+```
+
+#### Resolving Export Collisions
+
+When export collisions occur, consider these patterns:
+
+**1. Use More Specific Service Names**
+```php
+class DatabaseModuleA implements PowerModule, ExportsComponents
+{
+    public static function exports(): array
+    {
+        return ['MySqlDatabaseConnection']; // Different name
+    }
+}
+
+class DatabaseModuleB implements PowerModule, ExportsComponents
+{
+    public static function exports(): array
+    {
+        return ['PostgresDatabaseConnection']; // Different name
+    }
+}
+```
+
+**2. Create a Shared Infrastructure Module**
+```php
+class SharedDatabaseModule implements PowerModule, ExportsComponents
+{
+    public static function exports(): array
+    {
+        return [DatabaseConnection::class];
+    }
+}
+
+// Modules import from shared module instead of exporting
+class UserModule implements PowerModule, ImportsComponents
+{
+    public static function imports(): array
+    {
+        return [ImportItem::create(SharedDatabaseModule::class, DatabaseConnection::class)];
+    }
+}
+```
+
 ## Module Lifecycle
 
 The framework follows a carefully orchestrated lifecycle to ensure proper module composition:

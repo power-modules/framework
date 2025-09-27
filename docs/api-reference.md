@@ -39,6 +39,8 @@ interface ExportsComponents
 }
 ```
 
+**Export Collision Detection**: The framework enforces that each component can only be exported by one module. If multiple modules attempt to export the same service, an `ExportCollisionException` is thrown with guidance on resolution strategies.
+
 ### ImportsComponents
 
 Modules implementing this interface declare their dependencies on other modules.
@@ -285,6 +287,8 @@ enum SetupPhase
 ### ExportsComponentsSetup
 
 Automatically registers exported services in the root container.
+
+**Exception Handling**: Throws `ExportCollisionException` if multiple modules attempt to export the same service, preventing silent bugs and ensuring explicit dependency management.
 
 ### ImportsComponentsSetup
 
