@@ -1,8 +1,10 @@
 ---
 name: Bug report
-about: Report a reproducible problem
+about: Report a confirmed, reproducible problem with clear steps
 labels: bug
 ---
+
+**👋 Not sure if this is a bug?** Consider starting a discussion in our [🐛 Bug Reports category](https://github.com/power-modules/framework/discussions/categories/bug-reports) first to get community input.
 
 ## Description
 A clear description of the issue.

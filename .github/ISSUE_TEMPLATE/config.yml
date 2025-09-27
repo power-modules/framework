@@ -1,0 +1,21 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "💬 General Discussion"
+    url: https://github.com/power-modules/framework/discussions/categories/general
+    about: "Chat with the community about anything and everything"
+  
+  - name: "❓ Ask a Question"
+    url: https://github.com/power-modules/framework/discussions/categories/q-a
+    about: "Get help from the community with your implementation questions"
+  
+  - name: "💡 Feature Ideas & Requests"
+    url: https://github.com/power-modules/framework/discussions/categories/ideas-feature-requests
+    about: "Share ideas for new features or improvements (use this instead of feature request issues)"
+  
+  - name: "🏗️ Architecture & Design Discussion"
+    url: https://github.com/power-modules/framework/discussions/categories/architecture-design
+    about: "Discuss framework architecture, design patterns, and best practices"
+  
+  - name: "🎉 Show and Tell"
+    url: https://github.com/power-modules/framework/discussions/categories/show-and-tell
+    about: "Show off something you've built with the Modular Framework"

@@ -1,8 +1,12 @@
 ---
 name: Design feedback
-about: Share a perspective on architecture or developer experience
+about: Share detailed architectural feedback or DX concerns requiring maintainer attention
 labels: design
 ---
+
+**🏗️ Want to discuss architecture or design patterns?** Consider starting in our [Architecture & Design Discussions](https://github.com/power-modules/framework/discussions/categories/architecture-design) for broader community input.
+
+**This template is for specific design concerns that need maintainer attention.**
 
 ## Context
 What part of the framework are you commenting on?

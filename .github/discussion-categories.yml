@@ -1,0 +1,39 @@
+# Discussion categories for power-modules/framework
+# See https://docs.github.com/en/discussions/managing-discussions-for-your-community/managing-categories-for-discussions-in-your-repository
+
+discussions:
+  categories:
+    - name: "💬 General"
+      description: "Chat about anything and everything here"
+      emoji: "💬"
+      format: "open"
+
+    - name: "💡 Ideas & Feature Requests"
+      description: "Share ideas for new features or improvements to the framework"
+      emoji: "💡"
+      format: "open"
+
+    - name: "❓ Q&A"
+      description: "Ask the community for help with implementation questions"
+      emoji: "❓"
+      format: "question-answer"
+
+    - name: "🏗️ Architecture & Design"
+      description: "Discuss framework architecture, design patterns, and best practices"
+      emoji: "🏗️"
+      format: "open"
+
+    - name: "🎉 Show and tell"
+      description: "Show off something you've built with the Modular Framework"
+      emoji: "🎉"
+      format: "open"
+
+    - name: "🐛 Bug Reports"
+      description: "Report issues and bugs (will be triaged to Issues if confirmed)"
+      emoji: "🐛"
+      format: "open"
+
+    - name: "📚 Documentation"
+      description: "Discuss improvements to documentation and examples"
+      emoji: "📚"
+      format: "open"
