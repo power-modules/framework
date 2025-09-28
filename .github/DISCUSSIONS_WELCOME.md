@@ -19,12 +19,12 @@ We're using Discussions as a place to connect with other members of our communit
 ### 🚀 New to the Modular Framework?
 - Check out our [Getting Started Guide](https://github.com/power-modules/framework/blob/main/docs/getting-started.md)
 - Browse through existing discussions to see what others are working on
-- Don't hesitate to ask questions in the [❓ Q&A category](../../discussions/categories/q-a)
+- Don't hesitate to ask questions in the [❓ Q&A category](../discussions/categories/q-a)
 
 ### 🏗️ Building with the Framework?
-- Share your architecture questions in [🏗️ Architecture & Design](../../discussions/categories/architecture-design)
-- Show off your projects in [🎉 Show and tell](../../discussions/categories/show-and-tell)
-- Suggest improvements in [💡 Ideas & Feature Requests](../../discussions/categories/ideas-feature-requests)
+- Share your architecture questions in [🏗️ Architecture & Design](../discussions/categories/architecture-design)
+- Show off your projects in [🎉 Show and tell](../discussions/categories/show-and-tell)
+- Suggest improvements in [💡 Ideas & Feature Requests](../discussions/categories/ideas-feature-requests)
 
 ### 🤝 Want to Contribute?
 - Check out our [Contributing Guide](../../CONTRIBUTING.md)
@@ -53,7 +53,7 @@ We've established a few ground rules to ensure our community remains welcoming a
 
 ## Get Started Now!
 
-**To get started, [comment below](../../discussions) with an introduction of yourself and tell us:**
+**To get started, [comment below](../discussions) with an introduction of yourself and tell us:**
 - What brings you to the Modular Framework?
 - What type of projects are you working on (or planning to work on)?
 - What's your experience level with PHP and modular architectures?
