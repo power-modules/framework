@@ -35,8 +35,11 @@ class IterativeModuleDependencySorter implements ModuleDependencySorter
 
         // Build the dependency graph
         foreach ($allModules as $module) {
-            if (!isset($dependencies[$module])) {
+            if (array_key_exists($module, $dependencies) === false) {
                 $dependencies[$module] = [];
+            }
+
+            if (array_key_exists($module, $dependencyOf) === false) {
                 $dependencyOf[$module] = [];
             }
 
@@ -44,9 +47,19 @@ class IterativeModuleDependencySorter implements ModuleDependencySorter
                 $imports = $module::imports();
                 foreach ($imports as $import) {
                     $dependency = $import->moduleName;
-                    if (!in_array($dependency, $allModules, true)) {
+
+                    if (in_array($dependency, $allModules, true) === false) {
                         $allModules[] = $dependency; // Add missing dependencies to the list
                     }
+
+                    if (array_key_exists($dependency, $dependencies) === false) {
+                        $dependencies[$dependency] = [];
+                    }
+
+                    if (array_key_exists($dependency, $dependencyOf) === false) {
+                        $dependencyOf[$dependency] = [];
+                    }
+
                     $dependencies[$module][] = $dependency;
                     $dependencyOf[$dependency][] = $module;
                 }
