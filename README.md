@@ -60,11 +60,13 @@ $app = new ModularAppBuilder(__DIR__)
 
 **Available extensions:**
 - [**power-modules/router**](https://github.com/power-modules/router) - HTTP routing with PSR-15 middleware
-    Coming soon:
-    - **power-modules/events** - Event-driven architecture
-    - **power-modules/dependency-graph** - Visualize module dependencies
-    - **power-modules/cli** - Build CLI applications with modular commands
-    - **power-modules/plugin** - Plugin architecture for third-party modules
+- [**power-modules/plugin**](https://github.com/power-modules/plugin) - Plugin architecture for third-party modules
+- [**power-modules/dependency-graph**](https://github.com/power-modules/dependency-graph) - Visualize module dependencies
+- [**power-modules/dependency-graph-mermaid**](https://github.com/power-modules/dependency-graph-mermaid) - Mermaid plugin for dependency graph rendering
+
+Coming soon:
+- **power-modules/events** - Event-driven architecture
+- **power-modules/cli** - Build CLI applications with modular commands
 - **Your own!** - Create custom PowerModuleSetup implementations for your needs
 
 ## 🚀 Microservice Evolution Path
