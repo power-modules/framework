@@ -63,10 +63,10 @@ $app = new ModularAppBuilder(__DIR__)
 - [**power-modules/plugin**](https://github.com/power-modules/plugin) - Plugin architecture for third-party modules
 - [**power-modules/dependency-graph**](https://github.com/power-modules/dependency-graph) - Visualize module dependencies
 - [**power-modules/dependency-graph-mermaid**](https://github.com/power-modules/dependency-graph-mermaid) - Mermaid plugin for dependency graph rendering
+- [**power-modules/console**](https://github.com/power-modules/console) - PowerModuleSetup extension that auto-discovers and registers Symfony Console commands from Power Modules
 
 Coming soon:
 - **power-modules/events** - Event-driven architecture
-- **power-modules/cli** - Build CLI applications with modular commands
 - **Your own!** - Create custom PowerModuleSetup implementations for your needs
 
 ## 🚀 Microservice Evolution Path
