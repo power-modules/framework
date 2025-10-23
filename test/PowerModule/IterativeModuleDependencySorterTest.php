@@ -145,6 +145,38 @@ class IterativeModuleDependencySorterTest extends TestCase
 
         $this->assertSame([ExportingModuleA::class, MultiImportModule::class], $result);
     }
+
+    public function testMultipleImportItemsFromSameModule(): void
+    {
+        // Test that multiple ImportItem objects importing from the same module
+        // don't cause false circular dependency errors
+        $modules = [
+            PaymentModule::class,
+            UserModule::class,
+            OrderModule::class,
+            DatabaseModule::class,
+            NotificationModule::class,
+        ];
+
+        $result = $this->sorter->sort($modules);
+
+        // Verify correct ordering: dependencies come before dependents
+        $databasePos = array_search(DatabaseModule::class, $result);
+        $notificationPos = array_search(NotificationModule::class, $result);
+        $userPos = array_search(UserModule::class, $result);
+        $orderPos = array_search(OrderModule::class, $result);
+        $paymentPos = array_search(PaymentModule::class, $result);
+
+        // DatabaseModule and NotificationModule should come before UserModule
+        $this->assertLessThan($userPos, $databasePos);
+        $this->assertLessThan($userPos, $notificationPos);
+
+        // UserModule should come before OrderModule (OrderModule has 2 separate ImportItems from UserModule)
+        $this->assertLessThan($orderPos, $userPos);
+
+        // OrderModule should come before PaymentModule
+        $this->assertLessThan($paymentPos, $orderPos);
+    }
 }
 
 // Test modules for dependency sorting
@@ -262,7 +294,7 @@ class UserModule implements PowerModule, ImportsComponents, ExportsComponents
 
     public static function exports(): array
     {
-        return ['UserService'];
+        return ['UserService', 'AnotherService'];
     }
 
     public function register(ConfigurableContainerInterface $container): void
@@ -275,7 +307,10 @@ class OrderModule implements PowerModule, ImportsComponents, ExportsComponents
 {
     public static function imports(): array
     {
-        return [ImportItem::create(UserModule::class, 'UserService')];
+        return [
+            ImportItem::create(UserModule::class, 'UserService'),
+            ImportItem::create(UserModule::class, 'AnotherService'),
+        ];
     }
 
     public static function exports(): array

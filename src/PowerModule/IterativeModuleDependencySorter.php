@@ -60,8 +60,15 @@ class IterativeModuleDependencySorter implements ModuleDependencySorter
                         $dependencyOf[$dependency] = [];
                     }
 
-                    $dependencies[$module][] = $dependency;
-                    $dependencyOf[$dependency][] = $module;
+                    // Avoid adding duplicate dependencies
+                    if (in_array($dependency, $dependencies[$module], true) === false) {
+                        $dependencies[$module][] = $dependency;
+                    }
+
+                    // Avoid adding duplicate dependents
+                    if (in_array($module, $dependencyOf[$dependency], true) === false) {
+                        $dependencyOf[$dependency][] = $module;
+                    }
                 }
             }
         }
