@@ -80,11 +80,10 @@ class App implements ContainerInterface
         }
 
         // Second pass: setup all modules. Setup phase: Post
-        foreach ($powerModules as $powerModule) {
-            $powerModuleName =  PowerModuleHelper::getPowerModuleName($powerModule);
-            $setupDto = $this->getSetupDto($powerModule, SetupPhase::Post, $this->rootContainer->get($powerModuleName));
-
-            foreach ($this->moduleSetups as $powerModuleSetup) {
+        foreach ($this->moduleSetups as $powerModuleSetup) {
+            foreach ($powerModules as $powerModule) {
+                $powerModuleName =  PowerModuleHelper::getPowerModuleName($powerModule);
+                $setupDto = $this->getSetupDto($powerModule, SetupPhase::Post, $this->rootContainer->get($powerModuleName));
                 $powerModuleSetup->setup($setupDto);
             }
         }
