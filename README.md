@@ -147,7 +147,8 @@ class UserModule implements PowerModule, ExportsComponents, HasRoutes {
         // Implementation details remain private; OrderModule doesn't need to know anything changed
         $container->set(UserApiService::class, UserApiService::class)
             ->addArguments([Psr\Http\ClientInterface::class]);
-        $container->set(UserRepositoryInterface::class, UserApiClient::class);
+        // Bind the interface to the API service instead of the in-process service
+        $container->set(UserRepositoryInterface::class, UserApiService::class);
 
         $container->set(UserService::class, UserService::class);
         $container->set(UserController::class, UserController::class)
@@ -171,6 +172,8 @@ class OrderModule implements PowerModule, ImportsComponents {
     }
 }
 ```
+
+> **ℹ️ Note:** This example is a simplified illustration of the evolution path. In a real application, `UserModule` might continue to support in-process communication alongside the HTTP client, and the actual microservice implementation would likely live in its own repository.
 
 Because modules are designed with clear boundaries from the start, splitting them into independent services is a natural next step when you're ready to scale.
 
