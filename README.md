@@ -22,7 +22,7 @@ A **general-purpose modular architecture framework** for PHP. Build applications
 
 ## 🚀 Architectural Vision
 
-This framework is not just another option; it introduces a new architectural paradigm to the PHP ecosystem. It is built on a foundation of **runtime-enforced encapsulation** and **true modularity**, inspired by the principles of mature systems like OSGi.
+This framework is more than just another library — it introduces a new architectural paradigm to the PHP ecosystem, built on **runtime-enforced encapsulation** and **true modularity**, inspired by mature systems like OSGi.
 
 To understand the core innovations and how this framework differs from established solutions like Symfony and Laravel, please read our **[Architectural Vision Document](ARCHITECTURAL_VISION.md)**.
 
@@ -35,6 +35,22 @@ composer require power-modules/framework
 ```php
 use Modular\Framework\App\ModularAppBuilder;
 
+class OrdersModule implements PowerModule, ExportsComponents {
+    public static function exports(): array {
+        return [
+            OrderService::class,
+        ];
+    }
+
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        $container->set(OrderRepository::class, OrderRepository::class)
+            ->addArguments([DatabaseConnection::class]);
+        $container->set(OrderService::class, OrderService::class)
+            ->addArguments([OrderRepository::class]);
+    }
+}
+
 $app = new ModularAppBuilder(__DIR__)
     ->withModules(
         \MyApp\Auth\AuthModule::class,
@@ -44,6 +60,7 @@ $app = new ModularAppBuilder(__DIR__)
 
 // Get any exported service
 $orderService = $app->get(\MyApp\Orders\OrderService::class);
+// Fully initialized, with all dependencies resolved within the module's own container
 ```
 
 ## ⚡ PowerModuleSetup Extension System
@@ -53,8 +70,10 @@ The framework's most powerful feature - **PowerModuleSetup** allows extending mo
 ```php
 $app = new ModularAppBuilder(__DIR__)
     ->withModules(UserModule::class, OrderModule::class)
-    ->addPowerModuleSetup(new RoutingSetup())    // Adds HTTP routing to modules implementing HasRoutes interface
-    ->addPowerModuleSetup(new EventBusSetup())   // Pulls module events and handlers into a central event bus
+    ->withPowerSetup(
+        new RoutingSetup(),  // Adds HTTP routing to modules implementing HasRoutes interface
+        new EventBusSetup(), // Pulls module events and handlers into a central event bus
+    )
     ->build();
 ```
 
@@ -78,43 +97,82 @@ Start with a modular monolith, evolve to microservices naturally:
 class UserModule implements PowerModule, ExportsComponents {
     public static function exports(): array {
         return [
-            UserService::class,
+            // Expose the service directly for in-process use
+            UserRepositoryInterface::class,
         ];
+    }
+
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        $container->set(UserRepositoryInterface::class, UserService::class);
     }
 }
 
 class OrderModule implements PowerModule, ImportsComponents {
     public static function imports(): array {
         return [
-            ImportItem::create(UserModule::class, UserService::class),
+            // Import the interface from UserModule for in-process communication
+            ImportItem::create(UserModule::class, UserRepositoryInterface::class),
         ];
+    }
+
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        $container->set(OrderService::class, OrderService::class)
+            ->addArguments([UserRepositoryInterface::class]);
     }
 }
 ```
 
 *Later: Independent microservices*
 ```php
-class UserModule implements PowerModule, HasRoutes {
+class UserModule implements PowerModule, ExportsComponents, HasRoutes {
+    public static function exports(): array {
+        return [
+            // Still export the same interface — now resolved to an HTTP client rather than an in-process service
+            UserRepositoryInterface::class,
+        ];
+    }
+
     public function getRoutes(): array
     {
         return [
+            // Define HTTP routes for the User API
             Route::get('/', UserController::class, 'list'),
         ];
     }
 
     public function register(ConfigurableContainerInterface $container): void
     {
+        // Implementation details remain private; OrderModule doesn't need to know anything changed
+        $container->set(UserApiService::class, UserApiService::class)
+            ->addArguments([Psr\Http\ClientInterface::class]);
+        $container->set(UserRepositoryInterface::class, UserApiClient::class);
+
+        $container->set(UserService::class, UserService::class);
         $container->set(UserController::class, UserController::class)
             ->addArguments([UserService::class]);
     }
 }
 
 class OrderModule implements PowerModule, ImportsComponents {
-    // Uses User HTTP API instead of direct service import
+    public static function imports(): array {
+        return [
+            // The same import as before — now backed by an HTTP client instead of an in-process service.
+            // You can also drop this import and implement your own HTTP client directly in OrderModule.
+            ImportItem::create(UserModule::class, UserRepositoryInterface::class),
+        ];
+    }
+
+    public function register(ConfigurableContainerInterface $container): void
+    {
+        $container->set(OrderService::class, OrderService::class)
+            ->addArguments([UserRepositoryInterface::class]);
+    }
 }
 ```
 
-Your modules are designed with clear boundaries. When you're ready to scale, the module structure supports splitting them into separate services.
+Because modules are designed with clear boundaries from the start, splitting them into independent services is a natural next step when you're ready to scale.
 
 ## 📚 Documentation
 
@@ -124,8 +182,6 @@ Your modules are designed with clear boundaries. When you're ready to scale, the
 - [Getting Started](docs/getting-started.md) - Build your first module in 5 minutes
 - [Use Cases](docs/use-cases/README.md) - Real-world examples (web APIs, ETL, etc.)
 - [Architecture](docs/architecture.md) - Deep dive into framework internals
-
-
 
 ## Contributing
 
