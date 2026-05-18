@@ -1,7 +1,7 @@
 .PHONY: test codestyle phpstan devcontainer
 
 test:
-	vendor/bin/phpunit --color=always --no-coverage test/
+	vendor/bin/phpunit --color=always --no-coverage --display-all-issues test/
 
 codestyle:
 	vendor/bin/php-cs-fixer check --config=.php-cs-fixer.php .

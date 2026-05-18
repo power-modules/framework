@@ -138,7 +138,7 @@ class UserModule implements PowerModule, ExportsComponents, HasRoutes {
     {
         return [
             // Define HTTP routes for the User API
-            Route::get('/', UserController::class, 'list'),
+            Route::get('/', UserController::class),
         ];
     }
 

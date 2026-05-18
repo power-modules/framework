@@ -195,10 +195,13 @@ final readonly class UserController implements RequestHandlerInterface
 {
     public function __construct(private AuthService $authService) {}
 
-    // Default handle method - for catch-all routing
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new JsonResponse(['error' => 'Method not found'], 404);
+        return match ([$request->getMethod(), $request->getUri()->getPath()]) {
+            ['POST', '/api/v1/auth/login'] => $this->login($request),
+            ['GET', '/api/v1/user/profile'] => $this->profile($request),
+            default => new JsonResponse(['error' => 'Method not found'], 404),
+        };
     }
 
     public function login(ServerRequestInterface $request): ResponseInterface
@@ -235,10 +238,13 @@ final readonly class UserController implements RequestHandlerInterface
 // Product Controller
 final readonly class ProductController implements RequestHandlerInterface
 {
-    // Default handle method - for catch-all routing
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new JsonResponse(['error' => 'Method not found'], 404);
+        return match ($request->getMethod()) {
+            'GET' => $this->list($request),
+            'POST' => $this->create($request),
+            default => new JsonResponse(['error' => 'Method not found'], 404),
+        };
     }
 
     public function list(ServerRequestInterface $request): ResponseInterface
@@ -291,14 +297,14 @@ final readonly class ApiModule implements PowerModule, ImportsComponents, HasRou
     {
         return [
             // Public login route (no middleware)
-            Route::post('/auth/login', UserController::class, 'login'),
+            Route::post('/auth/login', UserController::class),
             
             // Protected routes (with AuthMiddleware)
-            Route::get('/user/profile', UserController::class, 'profile')
+            Route::get('/user/profile', UserController::class)
                 ->addMiddleware(AuthMiddleware::class),
-            Route::get('/products', ProductController::class, 'list')
+            Route::get('/products', ProductController::class)
                 ->addMiddleware(AuthMiddleware::class),
-            Route::post('/products', ProductController::class, 'create')
+            Route::post('/products', ProductController::class)
                 ->addMiddleware(AuthMiddleware::class),
         ];
     }
