@@ -69,16 +69,19 @@ The framework's most powerful feature - **PowerModuleSetup** allows extending mo
 
 ```php
 $app = new ModularAppBuilder(__DIR__)
-    ->withModules(UserModule::class, OrderModule::class)
-    ->withPowerSetup(
-        new RoutingSetup(),  // Adds HTTP routing to modules implementing HasRoutes interface
-        new EventBusSetup(), // Pulls module events and handlers into a central event bus
+    ->withPowerSetup(...RoutingSetup::withDefaults())
+    ->withModules(
+        RoutingModule::class,
+        RouterModule::class,
+        UserModule::class,
+        OrderModule::class,
     )
+    ->withPowerSetup(new EventBusSetup()) // Pulls module events and handlers into a central event bus
     ->build();
 ```
 
 **Available extensions:**
-- [**power-modules/router**](https://github.com/power-modules/router) - HTTP routing with PSR-15 middleware
+- [**power-modules/router**](https://github.com/power-modules/router) - HTTP routing with PSR-15 middleware and RFC 7807 problem-details defaults
 - [**power-modules/plugin**](https://github.com/power-modules/plugin) - Plugin architecture for third-party modules
 - [**power-modules/dependency-graph**](https://github.com/power-modules/dependency-graph) - Visualize module dependencies
 - [**power-modules/dependency-graph-mermaid**](https://github.com/power-modules/dependency-graph-mermaid) - Mermaid plugin for dependency graph rendering

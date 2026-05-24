@@ -72,14 +72,21 @@ class ImportingModule implements PowerModule, ImportsComponents
 ```php
 $app = new ModularAppBuilder(__DIR__)
     ->withConfig(Config::forAppRoot(__DIR__)->set(Setting::CachePath, '/path/to/cache'))
-    ->withModules(ExportingModule::class, ImportingModule::class)
-    ->addPowerModuleSetup(new RoutingSetup())    // Adds HTTP routing to modules implementing HasRoutes interface
-    ->addPowerModuleSetup(new EventBusSetup())   // Pulls module events into a central event bus
+    ->withPowerSetup(...RoutingSetup::withDefaults()) // Adds HTTP routing with the default router composition
+    ->withModules(
+        RoutingModule::class,
+        RouterModule::class,
+        ExportingModule::class,
+        ImportingModule::class,
+    )
+    ->withPowerSetup(new EventBusSetup())   // Pulls module events into a central event bus
     ->build();
 
 // Access exported services through the app container
 $service = $app->get(PublicService::class);
 ```
+
+When the router extension is used, the default router-owned 404 and 405 responses and the default generic 500 response are RFC 7807 problem-details responses.
 
 **PowerModuleSetup Extension Pattern:**
 ```php

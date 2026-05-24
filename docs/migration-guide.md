@@ -120,7 +120,7 @@ class UserModule implements PowerModule, ExportsComponents
 }
 ```
 
-## Migration Strategy
+## Migration Approach
 
 ### 1. Identify Boundaries
 Look for natural boundaries in your application:

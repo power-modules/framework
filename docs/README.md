@@ -25,6 +25,8 @@ Before diving into the technical details, it is highly recommended to read our *
 - [Web API Development](use-cases/web-api.md)
 - [ETL Data Pipelines](use-cases/etl-pipeline.md)
 
+The router integration examples in this documentation assume RFC 7807 problem-details responses by default.
+
 **Ready for production?** Review [Advanced Patterns](advanced-patterns.md) for performance optimization, plugin systems, and complex module compositions.
 
 ## 🏗️ Core Concepts Overview
@@ -64,9 +66,14 @@ class OrderModule implements PowerModule, ImportsComponents {
 A powerful extension mechanism that allows adding capabilities to ALL modules without breaking encapsulation:
 ```php
 $app = new ModularAppBuilder(__DIR__)
-    ->withModules(UserModule::class, OrderModule::class)
-    ->addPowerModuleSetup(new RoutingSetup())    // Adds HTTP routing to modules implementing HasRoutes interface
-    ->addPowerModuleSetup(new EventBusSetup())   // Pulls module events and handlers into a central event bus
+    ->withPowerSetup(...RoutingSetup::withDefaults()) // Adds HTTP routing with the default router composition
+    ->withModules(
+        RoutingModule::class,
+        RouterModule::class,
+        UserModule::class,
+        OrderModule::class,
+    )
+    ->withPowerSetup(new EventBusSetup())   // Pulls module events and handlers into a central event bus
     ->build();
 ```
 
@@ -76,7 +83,7 @@ Applications are created using `ModularAppBuilder` with fluent configuration:
 $app = new ModularAppBuilder(__DIR__)
     ->withConfig($config)
     ->withModules(...$modules)
-    ->addPowerModuleSetup(...$setups)
+    ->withPowerSetup(...$setups)
     ->build();
 ```
 
